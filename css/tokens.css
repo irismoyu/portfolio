@@ -1,0 +1,110 @@
+/*
+  Design tokens — single source of truth for the whole site.
+  Source: docs/art-direction.md §2 §3 §5
+  Change a value here, it propagates everywhere.
+*/
+
+:root {
+  /* ---------------------------------------------------------------- */
+  /* Typography — families                                            */
+  /* Latin-first stacks with Noto Sans SC fallback so mixed CN/EN     */
+  /* text (e.g. "刘予墨 / LY") renders correctly from one declaration. */
+  /*                                                                    */
+  /* Note: "Archivo Expanded" is not a separate family on Google Fonts. */
+  /* It is the variable font "Archivo" with its wdth axis pinned to     */
+  /* 125 (expanded) — loaded that way in index.html/styleguide, and     */
+  /* elements using --font-display must also set --font-stretch-display */
+  /* (below) or the expanded face may not be selected in all browsers.  */
+  /* ---------------------------------------------------------------- */
+  --font-display: "Archivo", "Noto Sans SC", sans-serif;
+  --font-stretch-display: expanded;
+  --font-body: "Inter", "Noto Sans SC", sans-serif;
+  --font-mono: "Space Mono", "Noto Sans SC", monospace;
+  --font-zh: "Noto Sans SC", sans-serif;
+
+  /* ---------------------------------------------------------------- */
+  /* Typography — type scale                                          */
+  /* Modular scale, ratio 1.25 (major third), base 16px.               */
+  /* Named layers sit 2 steps apart on the scale for clear contrast;   */
+  /* fluid via clamp() so nothing needs per-breakpoint overrides.      */
+  /*   meta   = 16 / 1.25        ≈ 12.8px                              */
+  /*   body   = 16                = 16px                               */
+  /*   h2     = 16 * 1.25^3      ≈ 31.3px                              */
+  /*   disp-l = 16 * 1.25^5      ≈ 48.8px                              */
+  /*   disp-xl= 16 * 1.25^7      ≈ 76.3px                              */
+  /* ---------------------------------------------------------------- */
+  --fs-meta: clamp(0.75rem, 0.72rem + 0.15vw, 0.8rem);        /* 12–12.8px */
+  --fs-body: clamp(1rem, 0.95rem + 0.2vw, 1.125rem);           /* 16–18px */
+  --fs-h2: clamp(1.5rem, 1.25rem + 1.1vw, 1.95rem);            /* 24–31px */
+  --fs-display-l: clamp(2.25rem, 1.6rem + 2.9vw, 3.05rem);     /* 36–49px */
+  --fs-display-xl: clamp(2.75rem, 1.4rem + 6vw, 4.77rem);      /* 44–76px */
+
+  /* Typography — weights */
+  --fw-display-xl: 800;
+  --fw-display-l: 700;
+  --fw-h2: 600;
+  --fw-body-strong: 500;
+  --fw-body: 400;
+  --fw-meta: 400;
+  --fw-zh-heading: 700;
+  --fw-zh-heading-black: 900;
+  --fw-zh-body: 400;
+
+  /* Typography — rhythm */
+  --lh-heading: 1.1;
+  --lh-body: 1.6;
+  --tracking-meta: 0.06em;
+
+  /* ---------------------------------------------------------------- */
+  /* Color — light mode (paper), default page surface                 */
+  /* ---------------------------------------------------------------- */
+  --paper: #ECEDF2;
+  --paper-2: #F6F7FB;
+  --ink: #141A2E;
+  --ink-2: #3E4665;
+  --faint: #5D6688;
+  --line: #D2D5E2;
+
+  /* Color — dark mode (deep), for hero / large color blocks */
+  --deep: #081160;
+  --deep-2: #161E42;
+  --on-deep: #EEF0F8;
+  --on-deep-2: #9AA3C4;
+
+  /* Color — unified highlight (functional, not a project accent) */
+  --hi: #4C6FFF;
+  --hi-on-deep: #6E8BFF;
+
+  /* ---------------------------------------------------------------- */
+  /* Spacing — 8pt grid                                                */
+  /* ---------------------------------------------------------------- */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 16px;
+  --space-4: 24px;
+  --space-5: 32px;
+  --space-6: 48px;
+  --space-7: 64px;
+  --space-8: 96px;
+
+  /* ---------------------------------------------------------------- */
+  /* Radius — restrained, no large blobby corners                     */
+  /* ---------------------------------------------------------------- */
+  --radius-image: 2px;
+  --radius-card: 10px;
+  --radius-button: 12px;
+
+  /* ---------------------------------------------------------------- */
+  /* Motion                                                            */
+  /* ---------------------------------------------------------------- */
+  --ease-standard: cubic-bezier(0.16, 1, 0.3, 1);
+  --duration-fast: 150ms;
+  --duration-base: 220ms;
+  --duration-slow: 500ms;
+
+  /* ---------------------------------------------------------------- */
+  /* Shadow — faint only, no heavy drop shadows                        */
+  /* ---------------------------------------------------------------- */
+  --shadow-sm: 0 1px 2px rgba(20, 26, 46, 0.06);
+  --shadow-md: 0 4px 12px rgba(20, 26, 46, 0.08);
+}

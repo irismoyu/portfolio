@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Styleguide — 刘予墨作品集</title>
+  <meta name="robots" content="noindex" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,600;125,700;125,800&family=Inter:wght@400;500&family=Space+Mono:wght@400&family=Noto+Sans+SC:wght@400;700;900&display=swap"
+    rel="stylesheet"
+  />
+
+  <link rel="stylesheet" href="../css/tokens.css" />
+  <link rel="stylesheet" href="../css/base.css" />
+  <link rel="stylesheet" href="styleguide.css" />
+</head>
+<body>
+
+  <header class="sg-header">
+    <p class="text-meta">Phase 4 · Design System Review</p>
+    <h1 class="text-display-l">Styleguide</h1>
+    <p class="text-body">
+      本页只展示 token（字体 / 配色 / 间距 / 圆角 / 动效）与基础排版，
+      不含首页内容、不含 3D、不含详情页。对应 <code>docs/art-direction.md</code> §2 §3 §5。
+    </p>
+  </header>
+
+  <main>
+
+    <!-- ================= Typography ================= -->
+    <section class="sg-section" id="typography" aria-labelledby="typography-h">
+      <h2 id="typography-h" class="text-h2 sg-section-title">01 · 字体 Typography</h2>
+
+      <div class="sg-subgroup">
+        <p class="text-meta sg-label">字体组合 Font Families</p>
+        <div class="sg-family-grid">
+          <div class="sg-family-card">
+            <p class="text-meta sg-family-name">Display — Archivo <span class="sg-dim">(wdth 125 / expanded)</span></p>
+            <p class="text-display-l" style="font-size: var(--fs-h2);">LIU YUMO 刘予墨</p>
+          </div>
+          <div class="sg-family-card">
+            <p class="text-meta sg-family-name">Body — Inter</p>
+            <p class="text-body" style="font-family: var(--font-body);">The quick brown fox jumps. 正文用于段落与简介文字。</p>
+          </div>
+          <div class="sg-family-card">
+            <p class="text-meta sg-family-name">Meta — Space Mono</p>
+            <p class="text-meta" style="text-transform: none;">App+硬件 · UX/交互 · 2025</p>
+          </div>
+          <div class="sg-family-card">
+            <p class="text-meta sg-family-name">中文 — Noto Sans SC</p>
+            <p class="text-zh-body" style="font-size: var(--fs-body);">所有中文统一使用思源黑体，呼应 Orbit 自有设计规范。</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="sg-subgroup">
+        <p class="text-meta sg-label">字号层级 Type Scale <span class="sg-dim">— 模块化比例 1.25，clamp() 响应式</span></p>
+
+        <div class="sg-scale-row">
+          <p class="text-display-xl sg-scale-sample">LIU YUMO</p>
+          <p class="text-meta sg-scale-meta">Display XL · Archivo 800 · var(--fs-display-xl)</p>
+        </div>
+        <div class="sg-scale-row">
+          <p class="text-display-l sg-scale-sample">Orbit 时环</p>
+          <p class="text-meta sg-scale-meta">Display L · Archivo 700 · var(--fs-display-l)</p>
+        </div>
+        <div class="sg-scale-row">
+          <p class="text-h2 sg-scale-sample">Selected Work</p>
+          <p class="text-meta sg-scale-meta">H2 · Archivo 600 · var(--fs-h2)</p>
+        </div>
+        <div class="sg-scale-row">
+          <p class="text-body-strong sg-scale-sample">一个最关键的决策：放弃传统相册式浏览。</p>
+          <p class="text-meta sg-scale-meta">正文强调 · Inter 500 · var(--fs-body)</p>
+        </div>
+        <div class="sg-scale-row">
+          <p class="text-body sg-scale-sample">旅程结束后，体验是散的——照片在相册、步数在手环、轨迹在地图。</p>
+          <p class="text-meta sg-scale-meta">正文 · Inter 400 · var(--fs-body)</p>
+        </div>
+        <div class="sg-scale-row">
+          <p class="text-meta sg-scale-sample">01 · Orbit 时环 · 2025</p>
+          <p class="text-meta sg-scale-meta">元数据 · Space Mono 400 · var(--fs-meta)</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= Color ================= -->
+    <section class="sg-section" id="color" aria-labelledby="color-h">
+      <h2 id="color-h" class="text-h2 sg-section-title">02 · 配色 Color</h2>
+
+      <div class="sg-subgroup">
+        <p class="text-meta sg-label">浅色模式 Light (paper)</p>
+        <div class="sg-swatch-grid">
+          <div class="sg-swatch" style="background: var(--paper); color: var(--ink);">
+            <span class="text-meta">--paper</span><span class="sg-hex">#ECEDF2</span>
+          </div>
+          <div class="sg-swatch" style="background: var(--paper-2); color: var(--ink);">
+            <span class="text-meta">--paper-2</span><span class="sg-hex">#F6F7FB</span>
+          </div>
+          <div class="sg-swatch" style="background: var(--ink); color: var(--paper);">
+            <span class="text-meta">--ink</span><span class="sg-hex">#141A2E · 14.76:1</span>
+          </div>
+          <div class="sg-swatch" style="background: var(--ink-2); color: var(--paper);">
+            <span class="text-meta">--ink-2</span><span class="sg-hex">#3E4665 · 7.92:1</span>
+          </div>
+          <div class="sg-swatch" style="background: var(--faint); color: var(--paper);">
+            <span class="text-meta">--faint</span><span class="sg-hex">#5D6688 · 4.83:1</span>
+          </div>
+          <div class="sg-swatch" style="background: var(--line); color: var(--ink);">
+            <span class="text-meta">--line</span><span class="sg-hex">#D2D5E2</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sg-subgroup sg-dark-block">
+        <p class="text-meta sg-label" style="color: var(--on-deep-2);">深色模式 Dark (deep) — hero / 大色块</p>
+        <div class="sg-swatch-grid">
+          <div class="sg-swatch" style="background: var(--deep); color: var(--on-deep); border: 1px solid var(--deep-2);">
+            <span class="text-meta">--deep</span><span class="sg-hex">#081160</span>
+          </div>
+          <div class="sg-swatch" style="background: var(--deep-2); color: var(--on-deep);">
+            <span class="text-meta">--deep-2</span><span class="sg-hex">#161E42</span>
+          </div>
+          <div class="sg-swatch" style="background: var(--on-deep); color: var(--deep);">
+            <span class="text-meta">--on-deep</span><span class="sg-hex">#EEF0F8 · 14.65:1</span>
+          </div>
+          <div class="sg-swatch" style="background: var(--on-deep-2); color: var(--deep);">
+            <span class="text-meta">--on-deep-2</span><span class="sg-hex">#9AA3C4 · 7.24:1</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sg-subgroup">
+        <p class="text-meta sg-label">高亮蓝 Highlight <span class="sg-dim">— 统一功能色，非项目 accent</span></p>
+        <div class="sg-swatch-grid">
+          <div class="sg-swatch" style="background: var(--paper); color: var(--hi); border: 1px solid var(--line);">
+            <span class="text-meta">--hi</span><span class="sg-hex">#4C6FFF · 3.57:1（大字/按钮用）</span>
+          </div>
+          <div class="sg-swatch" style="background: var(--deep); color: var(--hi-on-deep);">
+            <span class="text-meta">--hi-on-deep</span><span class="sg-hex">#6E8BFF · 5.85:1</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= Spacing ================= -->
+    <section class="sg-section" id="spacing" aria-labelledby="spacing-h">
+      <h2 id="spacing-h" class="text-h2 sg-section-title">03 · 间距 Spacing <span class="sg-dim text-meta">— 8pt 网格</span></h2>
+      <div class="sg-space-list">
+        <div class="sg-space-row"><span class="sg-space-bar" style="width: var(--space-1);"></span><span class="text-meta">--space-1 · 4px</span></div>
+        <div class="sg-space-row"><span class="sg-space-bar" style="width: var(--space-2);"></span><span class="text-meta">--space-2 · 8px</span></div>
+        <div class="sg-space-row"><span class="sg-space-bar" style="width: var(--space-3);"></span><span class="text-meta">--space-3 · 16px</span></div>
+        <div class="sg-space-row"><span class="sg-space-bar" style="width: var(--space-4);"></span><span class="text-meta">--space-4 · 24px</span></div>
+        <div class="sg-space-row"><span class="sg-space-bar" style="width: var(--space-5);"></span><span class="text-meta">--space-5 · 32px</span></div>
+        <div class="sg-space-row"><span class="sg-space-bar" style="width: var(--space-6);"></span><span class="text-meta">--space-6 · 48px</span></div>
+        <div class="sg-space-row"><span class="sg-space-bar" style="width: var(--space-7);"></span><span class="text-meta">--space-7 · 64px</span></div>
+        <div class="sg-space-row"><span class="sg-space-bar" style="width: var(--space-8);"></span><span class="text-meta">--space-8 · 96px</span></div>
+      </div>
+    </section>
+
+    <!-- ================= Radius ================= -->
+    <section class="sg-section" id="radius" aria-labelledby="radius-h">
+      <h2 id="radius-h" class="text-h2 sg-section-title">04 · 圆角 Radius</h2>
+      <div class="sg-radius-grid">
+        <div class="sg-radius-card" style="border-radius: var(--radius-image);">
+          <span class="text-meta">--radius-image · 2px</span>
+        </div>
+        <div class="sg-radius-card" style="border-radius: var(--radius-card);">
+          <span class="text-meta">--radius-card · 10px</span>
+        </div>
+        <div class="sg-radius-card" style="border-radius: var(--radius-button);">
+          <span class="text-meta">--radius-button · 12px</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= Motion ================= -->
+    <section class="sg-section" id="motion" aria-labelledby="motion-h">
+      <h2 id="motion-h" class="text-h2 sg-section-title">05 · 动效 Motion <span class="sg-dim text-meta">— hover 试试</span></h2>
+      <div class="sg-motion-grid">
+        <button class="sg-motion-box sg-motion-fast" type="button">
+          <span class="text-meta">--duration-fast · 150ms</span>
+        </button>
+        <button class="sg-motion-box sg-motion-base" type="button">
+          <span class="text-meta">--duration-base · 220ms</span>
+        </button>
+        <button class="sg-motion-box sg-motion-slow" type="button">
+          <span class="text-meta">--duration-slow · 500ms</span>
+        </button>
+      </div>
+      <p class="text-body sg-note">缓动全部使用 <code>--ease-standard</code>（自然 ease-out）；全站尊重 <code>prefers-reduced-motion</code>，开启后本页动效会自动收为瞬时。</p>
+    </section>
+
+    <!-- ================= Shadow ================= -->
+    <section class="sg-section" id="shadow" aria-labelledby="shadow-h">
+      <h2 id="shadow-h" class="text-h2 sg-section-title">06 · 阴影 Shadow <span class="sg-dim text-meta">— 极淡，不用重投影</span></h2>
+      <div class="sg-shadow-grid">
+        <div class="sg-shadow-card" style="box-shadow: var(--shadow-sm);">
+          <span class="text-meta">--shadow-sm</span>
+        </div>
+        <div class="sg-shadow-card" style="box-shadow: var(--shadow-md);">
+          <span class="text-meta">--shadow-md</span>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="sg-footer">
+    <p class="text-meta">docs/art-direction.md §2 §3 §5 · css/tokens.css</p>
+  </footer>
+
+</body>
+</html>

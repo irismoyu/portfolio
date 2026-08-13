@@ -1,0 +1,236 @@
+/*
+  Styleguide page layout — presentational scaffolding for reviewing tokens.
+  Not part of the sitewide design system; do not import elsewhere.
+*/
+
+body {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: var(--space-6) var(--space-4) var(--space-8);
+}
+
+.sg-header {
+  padding-bottom: var(--space-6);
+  border-bottom: 1px solid var(--line);
+  margin-bottom: var(--space-7);
+}
+
+.sg-header .text-meta {
+  color: var(--hi);
+  margin-bottom: var(--space-2);
+}
+
+.sg-header h1 {
+  margin: var(--space-1) 0 var(--space-3);
+}
+
+.sg-header p.text-body {
+  max-width: 60ch;
+  color: var(--ink-2);
+}
+
+.sg-header code,
+.sg-note code {
+  font-family: var(--font-mono);
+  background: var(--paper-2);
+  padding: 0 4px;
+  border-radius: var(--radius-image);
+}
+
+.sg-section {
+  padding-block: var(--space-7);
+  border-bottom: 1px solid var(--line);
+}
+
+.sg-section:last-child {
+  border-bottom: none;
+}
+
+.sg-section-title {
+  margin-bottom: var(--space-5);
+}
+
+.sg-dim {
+  color: var(--faint);
+  font-weight: var(--fw-body);
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+.sg-subgroup + .sg-subgroup {
+  margin-top: var(--space-6);
+}
+
+.sg-label {
+  color: var(--faint);
+  margin-bottom: var(--space-3);
+}
+
+/* Typography */
+
+.sg-family-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--space-3);
+}
+
+.sg-family-card {
+  padding: var(--space-4);
+  background: var(--paper-2);
+  border-radius: var(--radius-card);
+}
+
+.sg-family-name {
+  color: var(--hi);
+  margin-bottom: var(--space-2);
+}
+
+.sg-scale-row {
+  padding-block: var(--space-3);
+  border-top: 1px dashed var(--line);
+}
+
+.sg-scale-row:first-child {
+  border-top: none;
+}
+
+.sg-scale-sample {
+  margin-bottom: var(--space-1);
+}
+
+.sg-scale-meta {
+  color: var(--faint);
+}
+
+/* Color */
+
+.sg-dark-block {
+  background: var(--deep);
+  padding: var(--space-5);
+  border-radius: var(--radius-card);
+}
+
+.sg-swatch-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: var(--space-3);
+}
+
+.sg-swatch {
+  height: 96px;
+  border-radius: var(--radius-card);
+  padding: var(--space-3);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.sg-hex {
+  font-family: var(--font-mono);
+  font-size: var(--fs-meta);
+}
+
+/* Spacing */
+
+.sg-space-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.sg-space-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.sg-space-bar {
+  display: block;
+  height: 16px;
+  background: var(--hi);
+  border-radius: var(--radius-image);
+  flex-shrink: 0;
+}
+
+/* Radius */
+
+.sg-radius-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}
+
+.sg-radius-card {
+  width: 140px;
+  height: 96px;
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+  display: flex;
+  align-items: flex-end;
+  padding: var(--space-2);
+}
+
+/* Motion */
+
+.sg-motion-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+.sg-motion-box {
+  width: 160px;
+  height: 96px;
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  cursor: pointer;
+  display: flex;
+  align-items: flex-end;
+  padding: var(--space-2);
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  transition-property: background-color, transform;
+  transition-timing-function: var(--ease-standard);
+}
+
+.sg-motion-fast { transition-duration: var(--duration-fast); }
+.sg-motion-base { transition-duration: var(--duration-base); }
+.sg-motion-slow { transition-duration: var(--duration-slow); }
+
+.sg-motion-box:hover,
+.sg-motion-box:focus-visible {
+  background: var(--hi);
+  color: var(--on-deep);
+  transform: translateY(-4px);
+}
+
+.sg-note {
+  color: var(--ink-2);
+  max-width: 60ch;
+}
+
+/* Shadow */
+
+.sg-shadow-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-5);
+}
+
+.sg-shadow-card {
+  width: 160px;
+  height: 96px;
+  background: var(--paper-2);
+  border-radius: var(--radius-card);
+  display: flex;
+  align-items: flex-end;
+  padding: var(--space-3);
+}
+
+.sg-footer {
+  margin-top: var(--space-8);
+  color: var(--faint);
+}

@@ -1,0 +1,119 @@
+/*
+  Base layer — reset + default typography built on tokens.css.
+  No component styles here; that belongs to each page/section.
+*/
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: var(--fs-body);
+  font-weight: var(--fw-body);
+  line-height: var(--lh-body);
+}
+
+img,
+picture,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-stretch: var(--font-stretch-display);
+  line-height: var(--lh-heading);
+  font-weight: var(--fw-h2);
+}
+
+p {
+  margin: 0;
+}
+
+a {
+  color: inherit;
+}
+
+/* Utility type classes — map directly to the type-scale tokens */
+
+.text-display-xl {
+  font-family: var(--font-display);
+  font-stretch: var(--font-stretch-display);
+  font-size: var(--fs-display-xl);
+  font-weight: var(--fw-display-xl);
+  line-height: var(--lh-heading);
+}
+
+.text-display-l {
+  font-family: var(--font-display);
+  font-stretch: var(--font-stretch-display);
+  font-size: var(--fs-display-l);
+  font-weight: var(--fw-display-l);
+  line-height: var(--lh-heading);
+}
+
+.text-h2 {
+  font-family: var(--font-display);
+  font-stretch: var(--font-stretch-display);
+  font-size: var(--fs-h2);
+  font-weight: var(--fw-h2);
+  line-height: var(--lh-heading);
+}
+
+.text-body-strong {
+  font-family: var(--font-body);
+  font-size: var(--fs-body);
+  font-weight: var(--fw-body-strong);
+}
+
+.text-body {
+  font-family: var(--font-body);
+  font-size: var(--fs-body);
+  font-weight: var(--fw-body);
+}
+
+.text-meta {
+  font-family: var(--font-mono);
+  font-size: var(--fs-meta);
+  font-weight: var(--fw-meta);
+  letter-spacing: var(--tracking-meta);
+  text-transform: uppercase;
+}
+
+.text-zh-heading {
+  font-family: var(--font-zh);
+  font-weight: var(--fw-zh-heading);
+}
+
+.text-zh-body {
+  font-family: var(--font-zh);
+  font-weight: var(--fw-zh-body);
+}
+
+/* Global motion contract — collapse everything when requested */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
