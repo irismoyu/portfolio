@@ -30,15 +30,21 @@
 
   <main>
     <!--
-      Placeholder entry point for the hero-3d embed (see /hero-3d). Content
-      here is a stand-in — only the background/text tokens were switched to
-      the deep-indigo pair so the fixed nav above reads correctly over it.
+      hero-3d island: a self-mounting React/R3F bundle built from /hero-3d
+      (see hero-3d/vite.config.js — library-mode build, run `npm run build`
+      inside hero-3d/ after changing the scene, then commit dist/hero-3d.js).
+      main.jsx looks for #hero-3d-root and mounts into it; nothing else on
+      this page is React. The markup below is a static fallback only —
+      React replaces it once the module script runs, so it's only ever
+      seen if JS fails to load.
     -->
-    <section id="hero" class="hero-placeholder">
-      <p class="text-meta" style="color: var(--hi-on-deep);">Phase 4 · under construction</p>
-      <h1 class="text-display-l">刘予墨 · Liu Yumo</h1>
-      <p class="text-body" style="color: var(--on-deep-2); max-width: 60ch;">首页内容尚未开始搭建。当前可查看设计系统与 token。</p>
-      <a href="styleguide/" class="text-body-strong" style="color: var(--hi-on-deep);">→ 查看 Styleguide</a>
+    <section id="hero" class="hero">
+      <div id="hero-3d-root">
+        <div class="hero-fallback">
+          <p class="text-meta" style="color: var(--hi-on-deep);">Phase 4</p>
+          <h1 class="text-display-l">刘予墨 · Liu Yumo</h1>
+        </div>
+      </div>
     </section>
 
     <section id="about" class="about" aria-label="About">
@@ -67,5 +73,7 @@
       <p class="text-meta about-next">SELECTED WORK — 3 PROJECTS · 2025</p>
     </section>
   </main>
+
+  <script type="module" src="hero-3d/dist/hero-3d.js"></script>
 </body>
 </html>

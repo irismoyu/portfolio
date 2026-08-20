@@ -66,19 +66,32 @@ html {
 }
 
 /* ---------------------------------------------------------------- */
-/* Hero placeholder — deep-indigo so the fixed nav reads correctly    */
-/* over it until hero-3d is embedded here.                            */
+/* Hero — mounts the hero-3d island (see index.html for the script tag   */
+/* and the fallback markup). height must be a definite length, not       */
+/* min-height: the R3F canvas inside is sized to 100% of its parent all  */
+/* the way down, and percentage heights only resolve against a parent    */
+/* with a definite height — min-height + auto content would collapse it. */
 /* ---------------------------------------------------------------- */
 
-.hero-placeholder {
-  min-height: 100svh;
+.hero {
+  height: 100svh;
+  background: var(--deep);
+}
+
+#hero-3d-root {
+  width: 100%;
+  height: 100%;
+}
+
+.hero-fallback {
+  width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   justify-content: center;
   gap: var(--space-4);
   padding: var(--space-8) var(--space-6);
-  background: var(--deep);
   color: var(--on-deep);
 }
 
@@ -87,13 +100,18 @@ html {
 /* ---------------------------------------------------------------- */
 
 .about {
-  scroll-margin-top: var(--space-8);
+  /* Tighter top than bottom: pulls the section up close behind hero, while
+     keeping room to breathe before the "SELECTED WORK" eyebrow below. */
+  scroll-margin-top: var(--space-6);
   background: var(--deep);
   color: var(--on-deep);
-  padding: var(--space-8) var(--space-6);
+  padding: var(--space-6) var(--space-6) var(--space-8);
   display: flex;
   flex-direction: column;
-  align-items: center;
+  /* Left-aligned from the same --space-6 edge hero uses, not centered — a
+     column floating mid-page reads as unanchored; starting flush left at a
+     shared margin is what makes it read as a deliberate editorial column. */
+  align-items: flex-start;
   gap: var(--space-7);
   border-top: 1px solid var(--deep-2);
 }
@@ -103,6 +121,7 @@ html {
   max-width: 640px;
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
   gap: var(--space-5);
 }
 
@@ -117,20 +136,25 @@ html {
 .about-bio {
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
+  /* Tight gap: the EN line should read as a caption riding under the CN
+     line, not a second peer paragraph. */
+  gap: var(--space-2);
 }
 
 .about-bio p {
-  font-size: var(--fs-body);
+  margin: 0;
   line-height: var(--lh-body);
-  max-width: 62ch;
 }
 
 .about-bio-zh {
+  font-size: var(--fs-body);
   color: var(--on-deep);
 }
 
 .about-bio-en {
+  /* One step down the type scale + the muted on-deep token — CN carries
+     the statement, EN rides along as a quieter translation. */
+  font-size: var(--fs-meta);
   color: var(--on-deep-2);
 }
 
@@ -206,7 +230,7 @@ html {
     padding: var(--space-3) var(--space-4);
   }
 
-  .hero-placeholder,
+  .hero-fallback,
   .about {
     padding: var(--space-6) var(--space-4);
   }

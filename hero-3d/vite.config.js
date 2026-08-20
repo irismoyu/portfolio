@@ -10,6 +10,14 @@ import react from "@vitejs/plugin-react";
 // path without any server-side build step.
 export default defineConfig({
   plugins: [react()],
+  // Library-mode builds skip Vite's normal HTML-entry pipeline, which is
+  // what normally strips dev-only `process.env.NODE_ENV` checks out of
+  // React's own bundled code. Without this, the embedded bundle throws
+  // "process is not defined" at runtime in a browser (no Node `process`
+  // global) — this define makes that check a build-time constant instead.
+  define: {
+    "process.env.NODE_ENV": JSON.stringify("production"),
+  },
   build: {
     outDir: "dist",
     lib: {

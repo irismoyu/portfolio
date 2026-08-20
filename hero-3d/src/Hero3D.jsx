@@ -11,7 +11,7 @@ import { ContactShadows, Environment, Text3D, Stats } from "@react-three/drei";
 import { MeshTransmissionMaterial } from "@react-three/drei";
 import { EffectComposer, DepthOfField } from "@react-three/postprocessing";
 import { useSpring } from "@react-spring/three";
-import { useControls } from "leva";
+import { Leva, useControls } from "leva";
 import * as THREE from "three";
 import helvetikerBold from "three/examples/fonts/helvetiker_bold.typeface.json?url";
 import helvetikerBoldData from "three/examples/fonts/helvetiker_bold.typeface.json";
@@ -544,7 +544,8 @@ export default function Hero3D() {
         <EffectComposer>
           <DepthOfField target={[0, 0, 0]} focusRange={1.4} bokehScale={4} />
         </EffectComposer>
-        <Stats />
+        {/* dev-only fps counter — never ships in the production/embedded build */}
+        {import.meta.env.DEV && <Stats />}
       </Canvas>
       <div
         style={{
@@ -561,6 +562,11 @@ export default function Hero3D() {
       >
         {arranged ? "click to scatter / 点击散开" : "click to arrange / 点击排列"}
       </div>
+      {/* useControls elsewhere auto-mounts a global Leva panel unless one is
+          rendered explicitly — this is that explicit mount, so `hidden` can
+          hide it for the production/embedded build. transmission etc. still
+          apply either way; only the floating control panel is affected. */}
+      <Leva hidden={import.meta.env.PROD} />
     </div>
   );
 }
