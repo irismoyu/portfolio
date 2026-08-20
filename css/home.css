@@ -71,9 +71,23 @@ html {
 /* min-height: the R3F canvas inside is sized to 100% of its parent all  */
 /* the way down, and percentage heights only resolve against a parent    */
 /* with a definite height — min-height + auto content would collapse it. */
+/*                                                                        */
+/* position: sticky + top: 0 is the whole cover-transition trick: hero    */
+/* pins to the top of the viewport as soon as you start scrolling (it's   */
+/* already at document position 0, so there's nothing to scroll past      */
+/* first). .about follows it immediately in normal flow and is opaque, so */
+/* as the page scrolls, .about's box rises up over the pinned hero like a */
+/* card — no scroll-driven JS needed for the visual itself. z-index just  */
+/* makes the paint order explicit rather than relying on stacking-context */
+/* defaults. See index.html / Hero3D.jsx for the other half: the render   */
+/* loop actually pauses once hero is fully covered, via the sentinel at   */
+/* the top of #about below.                                               */
 /* ---------------------------------------------------------------- */
 
 .hero {
+  position: sticky;
+  top: 0;
+  z-index: 0;
   height: 100svh;
   background: var(--deep);
 }
@@ -100,8 +114,12 @@ html {
 /* ---------------------------------------------------------------- */
 
 .about {
-  /* Tighter top than bottom: pulls the section up close behind hero, while
-     keeping room to breathe before the "SELECTED WORK" eyebrow below. */
+  position: relative;
+  z-index: 1;
+  /* Full screen, not a strip hugging hero's bottom — this is what makes it
+     read as its own chapter, and what lets it fully cover hero once
+     scrolled up (see .hero's comment above). */
+  min-height: 100vh;
   scroll-margin-top: var(--space-6);
   background: var(--deep);
   color: var(--on-deep);
@@ -112,8 +130,30 @@ html {
      column floating mid-page reads as unanchored; starting flush left at a
      shared margin is what makes it read as a deliberate editorial column. */
   align-items: flex-start;
+  /* Content is shorter than a full screen, so with min-height:100vh it
+     needs its own vertical anchor — centering reads as a composed "chapter"
+     instead of text stranded at the top of a tall, mostly-empty box. */
+  justify-content: center;
   gap: var(--space-7);
-  border-top: 1px solid var(--deep-2);
+  /* Rounded top corners only — this is the "card sliding up" edge; the
+     bottom stays square since nothing is ever visible below it while it's
+     mid-cover. */
+  border-radius: 28px 28px 0 0;
+}
+
+/* Zero-size marker sitting exactly at .about's top edge. Hero-3d's own
+   IntersectionObserver watches this (not hero itself — hero is sticky, so
+   its own bounding box never leaves the viewport, making "is hero visible"
+   unanswerable from hero's side). The sentinel leaves the viewport (from
+   the top) at exactly the moment .about's top edge reaches y=0, i.e. the
+   exact moment .about fully covers the viewport and hero is 100% hidden. */
+#hero-cover-sentinel {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
 }
 
 .about-inner {
@@ -225,13 +265,164 @@ html {
   color: var(--on-deep-2);
 }
 
+/* ---------------------------------------------------------------- */
+/* Work — Léo-style: one unit per project, image → static caption    */
+/* block below it (see docs/ia-homepage.md §区③). Same deep-indigo    */
+/* surface as hero/about so the three sections read as one continuous */
+/* chapter, not a visual break.                                       */
+/* ---------------------------------------------------------------- */
+
+.work {
+  position: relative;
+  z-index: 1;
+  background: var(--deep);
+  color: var(--on-deep);
+  padding: var(--space-6) var(--space-6) var(--space-8);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  /* Generous, even air between whole project units — the biggest gap in
+     the scale, matching "大留白、克制" rather than a tight list. */
+  gap: var(--space-8);
+}
+
+.work-item {
+  width: 100%;
+  /* Wider than About's 640px text column — this is the "big image"
+     column, not a reading column — but still short of full-bleed so it
+     stays a deliberate, contained block on wide screens. */
+  max-width: 960px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.work-media {
+  position: relative;
+  width: 100%;
+}
+
+.work-media-link {
+  display: block;
+  border-radius: var(--radius-card);
+  overflow: hidden;
+}
+
+.work-media-placeholder {
+  width: 100%;
+  background: var(--deep-2);
+  transition: transform var(--duration-slow) var(--ease-standard),
+    filter var(--duration-slow) var(--ease-standard);
+}
+
+/* Hover/focus feedback lives on the link (the actual click target for
+   "跳到项目详情页"), not the nav buttons beside it. */
+.work-media-link:hover .work-media-placeholder,
+.work-media-link:focus-visible .work-media-placeholder {
+  transform: scale(1.02);
+  filter: brightness(1.08);
+}
+
+.work-media-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 999px;
+  /* Same translucent-chip-over-deep-content treatment as .site-nav. */
+  background: rgba(8, 17, 96, 0.55);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: var(--on-deep);
+  font-family: var(--font-body);
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color var(--duration-fast) var(--ease-standard);
+}
+
+.work-media-nav:hover,
+.work-media-nav:focus-visible {
+  background: rgba(8, 17, 96, 0.8);
+}
+
+.work-media-prev {
+  left: var(--space-3);
+}
+
+.work-media-next {
+  right: var(--space-3);
+}
+
+.work-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-2);
+}
+
+.work-title {
+  margin: 0;
+  /* Archivo carries the "01 · Orbit" half; its own stack falls back to
+     Noto Sans SC per-glyph for the Chinese project name, same as
+     .site-nav-brand — no second font declaration needed. */
+  font-family: var(--font-display);
+  font-stretch: var(--font-stretch-display);
+  font-size: var(--fs-h2);
+  font-weight: var(--fw-h2);
+  line-height: var(--lh-heading);
+}
+
+.work-hook {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.work-hook p {
+  margin: 0;
+  line-height: var(--lh-body);
+}
+
+.work-hook-zh {
+  font-size: var(--fs-body);
+  color: var(--on-deep);
+}
+
+.work-hook-en {
+  font-size: var(--fs-meta);
+  color: var(--on-deep-2);
+}
+
+.work-role {
+  margin: 0;
+  color: var(--on-deep-2);
+}
+
+.work-meta {
+  margin: 0;
+  color: var(--on-deep-2);
+}
+
 @media (max-width: 480px) {
   .site-nav {
     padding: var(--space-3) var(--space-4);
   }
 
   .hero-fallback,
-  .about {
+  .about,
+  .work {
     padding: var(--space-6) var(--space-4);
+  }
+
+  .work-media-nav {
+    width: 32px;
+    height: 32px;
+    font-size: 1rem;
   }
 }

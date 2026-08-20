@@ -20,57 +20,144 @@
   <header class="site-nav">
     <a href="#hero" class="site-nav-brand">刘予墨 <span class="site-nav-brand-en">/ LY</span></a>
     <!--
-      Work / Contact / CN·EN wait on their sections + a language toggle
-      existing — only About is wired up for now (see docs/ia-homepage.md).
+      Contact / CN·EN wait on their sections + a language toggle existing
+      (see docs/ia-homepage.md). Order follows the doc's nav mock: Work
+      before About, even though Work sits below About in document order.
     -->
     <nav class="site-nav-links" aria-label="Primary">
+      <a href="#work">Work</a>
       <a href="#about">About</a>
     </nav>
   </header>
 
   <main>
     <!--
-      hero-3d island: a self-mounting React/R3F bundle built from /hero-3d
-      (see hero-3d/vite.config.js — library-mode build, run `npm run build`
-      inside hero-3d/ after changing the scene, then commit dist/hero-3d.js).
-      main.jsx looks for #hero-3d-root and mounts into it; nothing else on
-      this page is React. The markup below is a static fallback only —
-      React replaces it once the module script runs, so it's only ever
-      seen if JS fails to load.
+      hero+about share this wrapper so hero's sticky containing block ends
+      right after about — without it, position:sticky constrains hero to
+      its PARENT's full box, and once work (much taller than one viewport)
+      became a third sibling of hero/about inside <main>, hero stayed
+      pinned/visible across the entire page instead of handing off to
+      about at the intended point.
     -->
-    <section id="hero" class="hero">
-      <div id="hero-3d-root">
-        <div class="hero-fallback">
-          <p class="text-meta" style="color: var(--hi-on-deep);">Phase 4</p>
-          <h1 class="text-display-l">刘予墨 · Liu Yumo</h1>
+    <div class="hero-cover-stack">
+      <!--
+        hero-3d island: a self-mounting React/R3F bundle built from /hero-3d
+        (see hero-3d/vite.config.js — library-mode build, run `npm run build`
+        inside hero-3d/ after changing the scene, then commit dist/hero-3d.js).
+        main.jsx looks for #hero-3d-root and mounts into it; nothing else on
+        this page is React. The markup below is a static fallback only —
+        React replaces it once the module script runs, so it's only ever
+        seen if JS fails to load.
+      -->
+      <section id="hero" class="hero">
+        <div id="hero-3d-root">
+          <div class="hero-fallback">
+            <p class="text-meta" style="color: var(--hi-on-deep);">Phase 4</p>
+            <h1 class="text-display-l">刘予墨 · Liu Yumo</h1>
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <section id="about" class="about" aria-label="About">
-      <div class="about-inner">
-        <h2 class="about-eyebrow">About</h2>
+      <section id="about" class="about" aria-label="About">
+        <!--
+          Watched by hero-3d's own IntersectionObserver (Hero3D.jsx) to know
+          when this section has scrolled up far enough to fully cover hero —
+          that's the signal it uses to pause the R3F render loop. See the
+          CSS comment on #hero-cover-sentinel for why hero can't detect this
+          about itself (it's position:sticky, so its own bounding box never
+          leaves the viewport).
+        -->
+        <div id="hero-cover-sentinel" aria-hidden="true"></div>
 
-        <div class="about-bio">
-          <p class="text-zh-body about-bio-zh">清华大学工业设计系产品设计专业，2027 届。关注用户体验与 AI 设计趋势，习惯从真实的用户缺口出发，把想法做成可运行的原型。Base 北京，可长期线下。</p>
-          <p class="text-body about-bio-en">Product Design, Dept. of Industrial Design, Tsinghua University — Class of 2027. Focused on user experience and emerging AI design. I work from real user gaps toward working prototypes. Based in Beijing, open to long-term on-site.</p>
+        <div class="about-inner">
+          <h2 class="about-eyebrow">About</h2>
+
+          <div class="about-bio">
+            <p class="text-zh-body about-bio-zh">清华大学工业设计系产品设计专业，2027 届。关注用户体验与 AI 设计趋势，习惯从真实的用户缺口出发，把想法做成可运行的原型。Base 北京，可长期线下。</p>
+            <p class="text-body about-bio-en">Product Design, Dept. of Industrial Design, Tsinghua University — Class of 2027. Focused on user experience and emerging AI design. I work from real user gaps toward working prototypes. Based in Beijing, open to long-term on-site.</p>
+          </div>
+
+          <ul class="about-tags" aria-label="Skills">
+            <li class="about-tag">AI 产品设计</li>
+            <li class="about-tag">交互设计</li>
+            <li class="about-tag">用户研究</li>
+            <li class="about-tag">智能硬件</li>
+            <li class="about-tag">情感化设计</li>
+          </ul>
+
+          <div class="about-contact">
+            <a class="about-email" href="mailto:ym-liu23@mails.tsinghua.edu.cn">ym-liu23@mails.tsinghua.edu.cn</a>
+            <a class="about-cv-btn" href="#">下载简历 / Download CV</a>
+          </div>
         </div>
 
-        <ul class="about-tags" aria-label="Skills">
-          <li class="about-tag">AI 产品设计</li>
-          <li class="about-tag">交互设计</li>
-          <li class="about-tag">用户研究</li>
-          <li class="about-tag">智能硬件</li>
-          <li class="about-tag">情感化设计</li>
-        </ul>
+        <p class="text-meta about-next">SELECTED WORK — 3 PROJECTS · 2025</p>
+      </section>
+    </div>
 
-        <div class="about-contact">
-          <a class="about-email" href="mailto:ym-liu23@mails.tsinghua.edu.cn">ym-liu23@mails.tsinghua.edu.cn</a>
-          <a class="about-cv-btn" href="#">下载简历 / Download CV</a>
+    <!--
+      Work — Léo-style, one unit per project, structure identical across
+      all three (see docs/ia-homepage.md §区③). Detail pages don't exist
+      yet, so each big-image link points at a placeholder anchor
+      (#orbit / #echocourt / #serava) rather than a real route.
+    -->
+    <section id="work" class="work" aria-label="Work">
+      <article class="work-item">
+        <div class="work-media">
+          <a class="work-media-link" href="#orbit" aria-label="查看 Orbit 时环 项目详情">
+            <div class="work-media-placeholder" style="aspect-ratio: 16 / 9;"></div>
+          </a>
+          <button class="work-media-nav work-media-prev" type="button" aria-label="上一张效果图">‹</button>
+          <button class="work-media-nav work-media-next" type="button" aria-label="下一张效果图">›</button>
         </div>
-      </div>
+        <div class="work-info">
+          <h3 class="work-title">01 · Orbit 时环</h3>
+          <div class="work-hook">
+            <p class="text-zh-body work-hook-zh">把一次旅程压缩成一枚可交互的"时环"，而非又一个相册。</p>
+            <p class="text-body work-hook-en">Turning a trip into an interactive "time-ring" — not just another photo album.</p>
+          </div>
+          <p class="text-body work-role">角色：UX / 交互 · 系统设计 · Solo</p>
+          <p class="text-meta work-meta">App + 硬件系统 · 2025</p>
+        </div>
+      </article>
 
-      <p class="text-meta about-next">SELECTED WORK — 3 PROJECTS · 2025</p>
+      <article class="work-item">
+        <div class="work-media">
+          <a class="work-media-link" href="#echocourt" aria-label="查看 EchoCourt 回声球场 项目详情">
+            <div class="work-media-placeholder" style="aspect-ratio: 16 / 9;"></div>
+          </a>
+          <button class="work-media-nav work-media-prev" type="button" aria-label="上一张效果图">‹</button>
+          <button class="work-media-nav work-media-next" type="button" aria-label="下一张效果图">›</button>
+        </div>
+        <div class="work-info">
+          <h3 class="work-title">02 · EchoCourt 回声球场</h3>
+          <div class="work-hook">
+            <p class="text-zh-body work-hook-zh">让看不见的挥拍动作被看见、被感知——技术隐形于球场。</p>
+            <p class="text-body work-hook-en">Making invisible swings visible and felt — technology dissolved into the court.</p>
+          </div>
+          <p class="text-body work-role">角色：交互 · 硬件 · Solo</p>
+          <p class="text-meta work-meta">智能产品设计 · 2025 · 导师 唐林涛</p>
+        </div>
+      </article>
+
+      <article class="work-item">
+        <div class="work-media">
+          <a class="work-media-link" href="#serava" aria-label="查看 Serava 喵梦 项目详情">
+            <div class="work-media-placeholder" style="aspect-ratio: 16 / 9;"></div>
+          </a>
+          <button class="work-media-nav work-media-prev" type="button" aria-label="上一张效果图">‹</button>
+          <button class="work-media-nav work-media-next" type="button" aria-label="下一张效果图">›</button>
+        </div>
+        <div class="work-info">
+          <h3 class="work-title">03 · Serava 喵梦</h3>
+          <div class="work-hook">
+            <p class="text-zh-body work-hook-zh">让 AI 有情感而非诡异——把宠物的存在感温柔地留下。</p>
+            <p class="text-body work-hook-en">Making AI feel emotional, not uncanny — keeping a pet's presence, gently.</p>
+          </div>
+          <p class="text-body work-role">角色：AI 产品 · 情感化设计 · 团队 3 人</p>
+          <p class="text-meta work-meta">AI 产品创新 · 2025 · 导师 陈震</p>
+        </div>
+      </article>
     </section>
   </main>
 
