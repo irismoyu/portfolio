@@ -1,0 +1,213 @@
+/*
+  Homepage layout — fixed nav, hero placeholder, About section.
+  Built entirely on tokens.css + base.css: no new colors, fonts, or spacing
+  values are introduced here, only composition. Not shared with other pages
+  (styleguide has its own styleguide.css); do not import elsewhere.
+*/
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* ---------------------------------------------------------------- */
+/* Nav — fixed, minimal. Only "About" is wired up: Work/Contact/CN·EN */
+/* wait on their sections existing (see docs/ia-homepage.md).         */
+/* ---------------------------------------------------------------- */
+
+.site-nav {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-4) var(--space-6);
+  background: rgba(8, 17, 96, 0.55);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.site-nav-brand {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--space-1);
+  font-family: var(--font-display);
+  font-stretch: var(--font-stretch-display);
+  font-weight: var(--fw-h2);
+  font-size: var(--fs-body);
+  color: var(--on-deep);
+  text-decoration: none;
+}
+
+.site-nav-brand-en {
+  font-family: var(--font-body);
+  font-weight: var(--fw-body);
+  color: var(--on-deep-2);
+}
+
+.site-nav-links {
+  display: flex;
+  gap: var(--space-5);
+}
+
+.site-nav-links a {
+  font-family: var(--font-mono);
+  font-size: var(--fs-meta);
+  letter-spacing: var(--tracking-meta);
+  text-transform: uppercase;
+  color: var(--on-deep-2);
+  text-decoration: none;
+  transition: color var(--duration-fast) var(--ease-standard);
+}
+
+.site-nav-links a:hover,
+.site-nav-links a:focus-visible {
+  color: var(--hi-on-deep);
+}
+
+/* ---------------------------------------------------------------- */
+/* Hero placeholder — deep-indigo so the fixed nav reads correctly    */
+/* over it until hero-3d is embedded here.                            */
+/* ---------------------------------------------------------------- */
+
+.hero-placeholder {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: var(--space-4);
+  padding: var(--space-8) var(--space-6);
+  background: var(--deep);
+  color: var(--on-deep);
+}
+
+/* ---------------------------------------------------------------- */
+/* About                                                               */
+/* ---------------------------------------------------------------- */
+
+.about {
+  scroll-margin-top: var(--space-8);
+  background: var(--deep);
+  color: var(--on-deep);
+  padding: var(--space-8) var(--space-6);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-7);
+  border-top: 1px solid var(--deep-2);
+}
+
+.about-inner {
+  width: 100%;
+  max-width: 640px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.about-eyebrow {
+  margin: 0;
+  font-size: var(--fs-meta);
+  letter-spacing: var(--tracking-meta);
+  text-transform: uppercase;
+  color: var(--hi-on-deep);
+}
+
+.about-bio {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.about-bio p {
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  max-width: 62ch;
+}
+
+.about-bio-zh {
+  color: var(--on-deep);
+}
+
+.about-bio-en {
+  color: var(--on-deep-2);
+}
+
+.about-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.about-tag {
+  font-family: var(--font-mono);
+  font-size: var(--fs-meta);
+  letter-spacing: var(--tracking-meta);
+  color: var(--on-deep);
+  background: var(--deep-2);
+  border-radius: 999px;
+  padding: var(--space-1) var(--space-3);
+}
+
+.about-contact {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-4);
+  margin-top: var(--space-2);
+}
+
+.about-email {
+  font-family: var(--font-body);
+  font-size: var(--fs-body);
+  font-weight: var(--fw-body-strong);
+  color: var(--hi-on-deep);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color var(--duration-fast) var(--ease-standard);
+}
+
+.about-email:hover,
+.about-email:focus-visible {
+  border-bottom-color: var(--hi-on-deep);
+}
+
+.about-cv-btn {
+  font-family: var(--font-body);
+  font-size: var(--fs-body);
+  font-weight: var(--fw-body-strong);
+  color: var(--deep);
+  background: var(--hi-on-deep);
+  border-radius: var(--radius-button);
+  padding: var(--space-2) var(--space-4);
+  text-decoration: none;
+  transition:
+    transform var(--duration-fast) var(--ease-standard),
+    background-color var(--duration-fast) var(--ease-standard);
+}
+
+.about-cv-btn:hover,
+.about-cv-btn:focus-visible {
+  background: var(--on-deep);
+  transform: translateY(-2px);
+}
+
+.about-next {
+  margin: 0;
+  color: var(--on-deep-2);
+}
+
+@media (max-width: 480px) {
+  .site-nav {
+    padding: var(--space-3) var(--space-4);
+  }
+
+  .hero-placeholder,
+  .about {
+    padding: var(--space-6) var(--space-4);
+  }
+}

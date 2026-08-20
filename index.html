@@ -14,18 +14,58 @@
 
   <link rel="stylesheet" href="css/tokens.css" />
   <link rel="stylesheet" href="css/base.css" />
+  <link rel="stylesheet" href="css/home.css" />
 </head>
 <body>
-  <!--
-    Placeholder entry point. Hero / About / Work / Footer content comes
-    later (see docs/ia-homepage.md) — this step only ships the token
-    system + styleguide for review.
-  -->
-  <main style="min-height: 100svh; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: var(--space-4); padding: var(--space-6);">
-    <p class="text-meta" style="color: var(--hi);">Phase 4 · under construction</p>
-    <h1 class="text-display-l">刘予墨 · Liu Yumo</h1>
-    <p class="text-body" style="color: var(--ink-2); max-width: 60ch;">首页内容尚未开始搭建。当前可查看设计系统与 token。</p>
-    <a href="styleguide/" class="text-body-strong" style="color: var(--hi);">→ 查看 Styleguide</a>
+  <header class="site-nav">
+    <a href="#hero" class="site-nav-brand">刘予墨 <span class="site-nav-brand-en">/ LY</span></a>
+    <!--
+      Work / Contact / CN·EN wait on their sections + a language toggle
+      existing — only About is wired up for now (see docs/ia-homepage.md).
+    -->
+    <nav class="site-nav-links" aria-label="Primary">
+      <a href="#about">About</a>
+    </nav>
+  </header>
+
+  <main>
+    <!--
+      Placeholder entry point for the hero-3d embed (see /hero-3d). Content
+      here is a stand-in — only the background/text tokens were switched to
+      the deep-indigo pair so the fixed nav above reads correctly over it.
+    -->
+    <section id="hero" class="hero-placeholder">
+      <p class="text-meta" style="color: var(--hi-on-deep);">Phase 4 · under construction</p>
+      <h1 class="text-display-l">刘予墨 · Liu Yumo</h1>
+      <p class="text-body" style="color: var(--on-deep-2); max-width: 60ch;">首页内容尚未开始搭建。当前可查看设计系统与 token。</p>
+      <a href="styleguide/" class="text-body-strong" style="color: var(--hi-on-deep);">→ 查看 Styleguide</a>
+    </section>
+
+    <section id="about" class="about" aria-label="About">
+      <div class="about-inner">
+        <h2 class="about-eyebrow">About</h2>
+
+        <div class="about-bio">
+          <p class="text-zh-body about-bio-zh">清华大学工业设计系产品设计专业，2027 届。关注用户体验与 AI 设计趋势，习惯从真实的用户缺口出发，把想法做成可运行的原型。Base 北京，可长期线下。</p>
+          <p class="text-body about-bio-en">Product Design, Dept. of Industrial Design, Tsinghua University — Class of 2027. Focused on user experience and emerging AI design. I work from real user gaps toward working prototypes. Based in Beijing, open to long-term on-site.</p>
+        </div>
+
+        <ul class="about-tags" aria-label="Skills">
+          <li class="about-tag">AI 产品设计</li>
+          <li class="about-tag">交互设计</li>
+          <li class="about-tag">用户研究</li>
+          <li class="about-tag">智能硬件</li>
+          <li class="about-tag">情感化设计</li>
+        </ul>
+
+        <div class="about-contact">
+          <a class="about-email" href="mailto:ym-liu23@mails.tsinghua.edu.cn">ym-liu23@mails.tsinghua.edu.cn</a>
+          <a class="about-cv-btn" href="#">下载简历 / Download CV</a>
+        </div>
+      </div>
+
+      <p class="text-meta about-next">SELECTED WORK — 3 PROJECTS · 2025</p>
+    </section>
   </main>
 </body>
 </html>
