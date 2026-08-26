@@ -56,6 +56,23 @@
             <h1 class="text-display-l">刘予墨 · Liu Yumo</h1>
           </div>
         </div>
+        <!--
+          Bottom fade + tagline + scroll cue — plain page markup, not part
+          of the hero-3d React island (which only ever draws inside
+          #hero-3d-root), so all three stay put across every
+          3D/static/loading state the island renders. The gradient softens
+          the letters into --deep before About's opaque card physically
+          covers them (see .hero's own comment on the sticky cover trick).
+        -->
+        <div class="hero-fade" aria-hidden="true"></div>
+        <div class="hero-tagline">
+          <span class="hero-tagline-rule" aria-hidden="true"></span>
+          <p class="hero-tagline-zh">产品与交互设计</p>
+          <p class="hero-tagline-en">Product &amp; Interaction Designer</p>
+        </div>
+        <a href="#about" class="hero-scroll-cue" aria-label="向下滚动查看更多">
+          <span class="hero-scroll-cue-arrow" aria-hidden="true">↓</span>
+        </a>
       </section>
 
       <section id="about" class="about" aria-label="About">
@@ -100,67 +117,213 @@
       all three (see docs/ia-homepage.md §区③). Detail pages don't exist
       yet, so each big-image link points at a placeholder anchor
       (#orbit / #echocourt / #serava) rather than a real route.
+
+      Work media — "focus center" peek carousel (Léo Parpeix-style):
+      active slide centered/full-size/opaque, neighbours peeking in
+      scaled down + dimmed. Plain <div>s only (no <ul>/<li>) so there's
+      no list-marker to fight with. .work-carousel-viewport clips;
+      .work-carousel-track is a left-aligned (NOT centered — see the CSS
+      comment on .work-carousel-track for why) flex row entirely
+      positioned by js/work-carousel.js (wired up at the bottom of this
+      file, driven by the [data-carousel] attribute on each .work-media),
+      which also clones the first/last slide to each end of the track so
+      there's a real neighbour to peek at even at the first/last real
+      slide, and continuously scales/dims/blurs every slide by its
+      live distance from center — both on drag and on prev/next's eased
+      snap. Each .work-carousel-slide wraps a .work-media-frame (fixed-ratio via
+      padding-top, not the `aspect-ratio` property, so it can't collapse
+      to 0 height) holding the real .work-media-asset — <img> for Serava,
+      <video autoplay loop muted playsinline> for Orbit and EchoCourt.
     -->
     <section id="work" class="work" aria-label="Work">
       <article class="work-item">
-        <div class="work-media">
-          <a class="work-media-link" href="#orbit" aria-label="查看 Orbit 时环 项目详情">
-            <div class="work-media-placeholder" style="aspect-ratio: 16 / 9;"></div>
-          </a>
-          <button class="work-media-nav work-media-prev" type="button" aria-label="上一张效果图">‹</button>
-          <button class="work-media-nav work-media-next" type="button" aria-label="下一张效果图">›</button>
+        <div class="work-media" data-carousel aria-label="Orbit 时环 效果图">
+          <div class="work-carousel-viewport">
+            <div class="work-carousel-track">
+              <div class="work-carousel-slide">
+                <a class="work-media-link" draggable="false" href="#orbit" aria-label="查看 Orbit 时环 项目详情（视频 1/2）">
+                  <div class="work-media-frame">
+                    <video class="work-media-asset" draggable="false" autoplay loop muted playsinline preload="metadata">
+                      <source src="assets/orbit/orbit-2.mp4" type="video/mp4" />
+                    </video>
+                  </div>
+                </a>
+              </div>
+              <div class="work-carousel-slide">
+                <a class="work-media-link" draggable="false" href="#orbit" aria-label="查看 Orbit 时环 项目详情（视频 2/2）">
+                  <div class="work-media-frame">
+                    <video class="work-media-asset" draggable="false" autoplay loop muted playsinline preload="metadata">
+                      <source src="assets/orbit/orbit-3.mp4" type="video/mp4" />
+                    </video>
+                  </div>
+                </a>
+              </div>
+            </div>
+          </div>
+          <button class="work-media-nav work-media-prev" type="button" aria-label="上一张效果图" disabled>‹</button>
+          <button class="work-media-nav work-media-next" type="button" aria-label="下一张效果图" disabled>›</button>
         </div>
         <div class="work-info">
-          <h3 class="work-title">01 · Orbit 时环</h3>
-          <div class="work-hook">
-            <p class="text-zh-body work-hook-zh">把一次旅程压缩成一枚可交互的"时环"，而非又一个相册。</p>
-            <p class="text-body work-hook-en">Turning a trip into an interactive "time-ring" — not just another photo album.</p>
+          <div class="work-info-left">
+            <h3 class="work-title">01 · Orbit 时环</h3>
+            <div class="work-hook">
+              <p class="text-zh-body work-hook-zh">把一次旅程压缩成一枚可交互的"时环"，而非又一个相册。</p>
+              <p class="text-body work-hook-en">Turning a trip into an interactive "time-ring" — not just another photo album.</p>
+            </div>
           </div>
-          <p class="text-body work-role">角色：UX / 交互 · 系统设计 · Solo</p>
-          <p class="text-meta work-meta">App + 硬件系统 · 2025</p>
+          <div class="work-info-right">
+            <p class="text-body work-role">角色：UX / 交互 · 系统设计 · Solo</p>
+            <p class="text-meta work-meta">App + 硬件系统 · 2025</p>
+          </div>
         </div>
       </article>
 
       <article class="work-item">
-        <div class="work-media">
-          <a class="work-media-link" href="#echocourt" aria-label="查看 EchoCourt 回声球场 项目详情">
-            <div class="work-media-placeholder" style="aspect-ratio: 16 / 9;"></div>
-          </a>
-          <button class="work-media-nav work-media-prev" type="button" aria-label="上一张效果图">‹</button>
-          <button class="work-media-nav work-media-next" type="button" aria-label="下一张效果图">›</button>
+        <div class="work-media" data-carousel aria-label="EchoCourt 回声球场 效果图">
+          <div class="work-carousel-viewport">
+            <div class="work-carousel-track">
+              <div class="work-carousel-slide">
+                <a class="work-media-link" draggable="false" href="#echocourt" aria-label="查看 EchoCourt 回声球场 项目详情（视频 1/7）">
+                  <div class="work-media-frame">
+                    <video class="work-media-asset" draggable="false" autoplay loop muted playsinline preload="metadata">
+                      <source src="assets/echocourt/7.mp4" type="video/mp4" />
+                    </video>
+                  </div>
+                </a>
+              </div>
+              <div class="work-carousel-slide">
+                <a class="work-media-link" draggable="false" href="#echocourt" aria-label="查看 EchoCourt 回声球场 项目详情（视频 2/7）">
+                  <div class="work-media-frame">
+                    <video class="work-media-asset" draggable="false" autoplay loop muted playsinline preload="metadata">
+                      <source src="assets/echocourt/1.mp4" type="video/mp4" />
+                    </video>
+                  </div>
+                </a>
+              </div>
+              <div class="work-carousel-slide">
+                <a class="work-media-link" draggable="false" href="#echocourt" aria-label="查看 EchoCourt 回声球场 项目详情（视频 3/7）">
+                  <div class="work-media-frame">
+                    <video class="work-media-asset" draggable="false" autoplay loop muted playsinline preload="metadata">
+                      <source src="assets/echocourt/2.mp4" type="video/mp4" />
+                    </video>
+                  </div>
+                </a>
+              </div>
+              <div class="work-carousel-slide">
+                <a class="work-media-link" draggable="false" href="#echocourt" aria-label="查看 EchoCourt 回声球场 项目详情（视频 4/7）">
+                  <div class="work-media-frame">
+                    <video class="work-media-asset" draggable="false" autoplay loop muted playsinline preload="metadata">
+                      <source src="assets/echocourt/3.mp4" type="video/mp4" />
+                    </video>
+                  </div>
+                </a>
+              </div>
+              <div class="work-carousel-slide">
+                <a class="work-media-link" draggable="false" href="#echocourt" aria-label="查看 EchoCourt 回声球场 项目详情（视频 5/7）">
+                  <div class="work-media-frame">
+                    <video class="work-media-asset" draggable="false" autoplay loop muted playsinline preload="metadata">
+                      <source src="assets/echocourt/4.mp4" type="video/mp4" />
+                    </video>
+                  </div>
+                </a>
+              </div>
+              <div class="work-carousel-slide">
+                <a class="work-media-link" draggable="false" href="#echocourt" aria-label="查看 EchoCourt 回声球场 项目详情（视频 6/7）">
+                  <div class="work-media-frame">
+                    <video class="work-media-asset" draggable="false" autoplay loop muted playsinline preload="metadata">
+                      <source src="assets/echocourt/5.mp4" type="video/mp4" />
+                    </video>
+                  </div>
+                </a>
+              </div>
+              <div class="work-carousel-slide">
+                <a class="work-media-link" draggable="false" href="#echocourt" aria-label="查看 EchoCourt 回声球场 项目详情（视频 7/7）">
+                  <div class="work-media-frame">
+                    <video class="work-media-asset" draggable="false" autoplay loop muted playsinline preload="metadata">
+                      <source src="assets/echocourt/6.mp4" type="video/mp4" />
+                    </video>
+                  </div>
+                </a>
+              </div>
+            </div>
+          </div>
+          <button class="work-media-nav work-media-prev" type="button" aria-label="上一张效果图" disabled>‹</button>
+          <button class="work-media-nav work-media-next" type="button" aria-label="下一张效果图" disabled>›</button>
         </div>
         <div class="work-info">
-          <h3 class="work-title">02 · EchoCourt 回声球场</h3>
-          <div class="work-hook">
-            <p class="text-zh-body work-hook-zh">让看不见的挥拍动作被看见、被感知——技术隐形于球场。</p>
-            <p class="text-body work-hook-en">Making invisible swings visible and felt — technology dissolved into the court.</p>
+          <div class="work-info-left">
+            <h3 class="work-title">02 · EchoCourt 回声球场</h3>
+            <div class="work-hook">
+              <p class="text-zh-body work-hook-zh">让看不见的挥拍动作被看见、被感知——技术隐形于球场。</p>
+              <p class="text-body work-hook-en">Making invisible swings visible and felt — technology dissolved into the court.</p>
+            </div>
           </div>
-          <p class="text-body work-role">角色：交互 · 硬件 · Solo</p>
-          <p class="text-meta work-meta">智能产品设计 · 2025 · 导师 唐林涛</p>
+          <div class="work-info-right">
+            <p class="text-body work-role">角色：交互 · 硬件 · Solo</p>
+            <p class="text-meta work-meta">智能产品设计 · 2025 · 导师 唐林涛</p>
+          </div>
         </div>
       </article>
 
       <article class="work-item">
-        <div class="work-media">
-          <a class="work-media-link" href="#serava" aria-label="查看 Serava 喵梦 项目详情">
-            <div class="work-media-placeholder" style="aspect-ratio: 16 / 9;"></div>
-          </a>
-          <button class="work-media-nav work-media-prev" type="button" aria-label="上一张效果图">‹</button>
-          <button class="work-media-nav work-media-next" type="button" aria-label="下一张效果图">›</button>
+        <div class="work-media" data-carousel aria-label="Serava 喵梦 效果图">
+          <div class="work-carousel-viewport">
+            <div class="work-carousel-track">
+              <div class="work-carousel-slide">
+                <a class="work-media-link" draggable="false" href="#serava" aria-label="查看 Serava 喵梦 项目详情（图 1/3）">
+                  <div class="work-media-frame">
+                    <img class="work-media-asset" draggable="false" src="assets/serava/serava-3.png" alt="Serava 喵梦 效果图 1" loading="lazy" decoding="async" />
+                  </div>
+                </a>
+              </div>
+              <div class="work-carousel-slide">
+                <a class="work-media-link" draggable="false" href="#serava" aria-label="查看 Serava 喵梦 项目详情（图 2/3）">
+                  <div class="work-media-frame">
+                    <img class="work-media-asset" draggable="false" src="assets/serava/serava-1.png" alt="Serava 喵梦 效果图 2" loading="lazy" decoding="async" />
+                  </div>
+                </a>
+              </div>
+              <div class="work-carousel-slide">
+                <a class="work-media-link" draggable="false" href="#serava" aria-label="查看 Serava 喵梦 项目详情（图 3/3）">
+                  <div class="work-media-frame">
+                    <img class="work-media-asset" draggable="false" src="assets/serava/serava-2.png" alt="Serava 喵梦 效果图 3" loading="lazy" decoding="async" />
+                  </div>
+                </a>
+              </div>
+            </div>
+          </div>
+          <button class="work-media-nav work-media-prev" type="button" aria-label="上一张效果图" disabled>‹</button>
+          <button class="work-media-nav work-media-next" type="button" aria-label="下一张效果图" disabled>›</button>
         </div>
         <div class="work-info">
-          <h3 class="work-title">03 · Serava 喵梦</h3>
-          <div class="work-hook">
-            <p class="text-zh-body work-hook-zh">让 AI 有情感而非诡异——把宠物的存在感温柔地留下。</p>
-            <p class="text-body work-hook-en">Making AI feel emotional, not uncanny — keeping a pet's presence, gently.</p>
+          <div class="work-info-left">
+            <h3 class="work-title">03 · Serava 喵梦</h3>
+            <div class="work-hook">
+              <p class="text-zh-body work-hook-zh">让 AI 有情感而非诡异——把宠物的存在感温柔地留下。</p>
+              <p class="text-body work-hook-en">Making AI feel emotional, not uncanny — keeping a pet's presence, gently.</p>
+            </div>
           </div>
-          <p class="text-body work-role">角色：AI 产品 · 情感化设计 · 团队 3 人</p>
-          <p class="text-meta work-meta">AI 产品创新 · 2025 · 导师 陈震</p>
+          <div class="work-info-right">
+            <p class="text-body work-role">角色：AI 产品 · 情感化设计 · 团队 3 人</p>
+            <p class="text-meta work-meta">AI 产品创新 · 2025 · 导师 陈震</p>
+          </div>
         </div>
       </article>
     </section>
   </main>
 
-  <script type="module" src="hero-3d/dist/hero-3d.js"></script>
+  <!--
+    ?v= is a manual cache-bust, not a build hash — vite.config.js emits a
+    fixed dist/hero-3d.js filename on purpose (see the comment near the
+    top of this file), so nothing else updates this automatically. Bump
+    it any time dist/hero-3d.js is rebuilt, or a browser that already
+    cached the old module (they cache `type="module"` scripts eagerly)
+    won't refetch it on a normal reload — only a hard refresh would have
+    shown the change otherwise.
+  -->
+  <script type="module" src="hero-3d/dist/hero-3d.js?v=20"></script>
+  <script src="js/hero-cursor.js" defer></script>
+  <script src="js/site-nav.js" defer></script>
+  <script src="js/work-carousel.js" defer></script>
 </body>
 </html>

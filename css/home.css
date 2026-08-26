@@ -14,6 +14,12 @@ html {
 /* wait on their sections existing (see docs/ia-homepage.md).         */
 /* ---------------------------------------------------------------- */
 
+/* Starts fully transparent — no background, no blur — so it reads as
+   light chrome floating over the hero composition instead of a bar
+   truncating it. js/site-nav.js adds .is-scrolled once the page has
+   scrolled a little, at which point the same translucent-chip treatment
+   used elsewhere (.work-media-nav, .hero-scroll-cue) kicks in for
+   readability over whatever content is now behind it. */
 .site-nav {
   position: fixed;
   inset: 0 0 auto 0;
@@ -22,6 +28,11 @@ html {
   align-items: center;
   justify-content: space-between;
   padding: var(--space-4) var(--space-6);
+  background: transparent;
+  transition: background-color var(--duration-base) var(--ease-standard);
+}
+
+.site-nav.is-scrolled {
   background: rgba(8, 17, 96, 0.55);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
@@ -107,6 +118,159 @@ html {
   gap: var(--space-4);
   padding: var(--space-8) var(--space-6);
   color: var(--on-deep);
+}
+
+/* Bottom fade + tagline + scroll cue — sit on top of #hero-3d-root (later
+   in DOM order, and .hero's own position:sticky gives all three an
+   absolute containing block) so they paint over the 3D/static/loading
+   content regardless of which of those hero-3d is currently showing.
+   The gradient softens the glass letters into --deep before About's
+   opaque card rises up and physically covers them (see .hero's
+   sticky-cover comment above) — without this the cover reads as a hard
+   cut instead of a fade. Tagline and cue both sit inside that fade band,
+   which is deliberate: by the time it reaches them the background has
+   already darkened most of the way to solid --deep, so light text stays
+   easily readable against it even with a busy 3D scene above. */
+.hero-fade {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: min(38vh, 420px);
+  background: linear-gradient(to bottom, rgba(8, 17, 96, 0) 0%, var(--deep) 100%);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.hero-tagline {
+  position: absolute;
+  left: var(--space-6);
+  bottom: var(--space-6);
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-1);
+  margin: 0;
+  pointer-events: none;
+}
+
+/* A small rising stem above the caption — reads as "this note is
+   anchored to something above it" rather than text floating loose in
+   the corner, without needing to sync a DOM element's exact pixel
+   position to the 3D word's (which moves with viewport size/camera
+   framing). Kept short and faint on purpose: a hint, not a decoration
+   competing with the glass letters or the bottom fade. */
+.hero-tagline-rule {
+  display: block;
+  width: 1px;
+  height: var(--space-5);
+  background: linear-gradient(to top, rgba(238, 240, 248, 0.4), transparent);
+  margin-bottom: var(--space-2);
+}
+
+.hero-tagline p {
+  margin: 0;
+}
+
+.hero-tagline-zh {
+  font-size: var(--fs-body);
+  color: var(--on-deep);
+}
+
+.hero-tagline-en {
+  font-size: var(--fs-meta);
+  color: var(--on-deep-2);
+}
+
+.hero-scroll-cue {
+  position: absolute;
+  left: 50%;
+  bottom: var(--space-5);
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  /* Same translucent-chip treatment as .site-nav / .work-media-nav, just
+     lighter (white-on-dark chip, not the indigo-tinted ones elsewhere) —
+     this sits directly over the glass letters, not a flat --deep field. */
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  color: var(--on-deep);
+  text-decoration: none;
+  transform: translateX(-50%);
+  animation: hero-scroll-cue-float 2.4s var(--ease-standard) infinite;
+}
+
+.hero-scroll-cue:hover,
+.hero-scroll-cue:focus-visible {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.hero-scroll-cue-arrow {
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+@keyframes hero-scroll-cue-float {
+  0%, 100% {
+    transform: translate(-50%, 0);
+    opacity: 0.7;
+  }
+  50% {
+    transform: translate(-50%, 6px);
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-scroll-cue {
+    animation: none;
+  }
+}
+
+/* Ball-trail cursor — js/hero-cursor.js creates/sizes this canvas and
+   draws the trailing balls onto it every frame; it bails out entirely
+   (never adding .custom-cursor-active, never creating .hero-ball-cursor)
+   on touch devices, prefers-reduced-motion, and narrow viewports, so the
+   rules below simply never apply there and the native cursor is
+   untouched. mix-blend-mode is what makes the balls read as tinting/
+   reflecting off the glass letters and colored backdrop behind them —
+   this is a sibling of #hero-3d-root inside #hero (not appended to
+   <body>), so it blends with hero-3d's WebGL canvas specifically. Sits
+   above that canvas but below .hero-fade/.hero-tagline/.hero-scroll-cue
+   (z-index 2/3) so the gradient still reads as opaque and the tagline/
+   cue text stays untinted.
+
+   plus-lighter (straight additive: result = min(src+dst,1) per channel)
+   over `screen` — this background is already fairly bright/saturated,
+   and screen's formula visibly washed the balls out to near-invisible
+   against it in testing; plus-lighter reads as a clear, vivid color
+   injection instead. */
+.hero-ball-cursor {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
+  mix-blend-mode: plus-lighter;
+  opacity: 0;
+  transition: opacity 300ms ease;
+}
+
+.hero-ball-cursor.is-visible {
+  opacity: 1;
+}
+
+body.custom-cursor-active #hero,
+body.custom-cursor-active #hero * {
+  cursor: none;
 }
 
 /* ---------------------------------------------------------------- */
@@ -280,7 +444,10 @@ html {
   padding: var(--space-6) var(--space-6) var(--space-8);
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  /* Center the whole item block in the section instead of hugging the
+     left padding — at .work-item's wide max-width the leftover space
+     needs to split evenly on both sides, not pile up on the right. */
+  align-items: center;
   /* Generous, even air between whole project units — the biggest gap in
      the scale, matching "大留白、克制" rather than a tight list. */
   gap: var(--space-8);
@@ -288,18 +455,106 @@ html {
 
 .work-item {
   width: 100%;
-  /* Wider than About's 640px text column — this is the "big image"
-     column, not a reading column — but still short of full-bleed so it
-     stays a deliberate, contained block on wide screens. */
-  max-width: 960px;
+  /* The big-image carousel wants to fill the available width (à la Léo
+     Parpeix's gallery) — .work's own space-6 padding is the "margin",
+     this just stops it going truly edge-to-edge on huge monitors. */
+  max-width: 1800px;
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: var(--space-4);
 }
+
+/* ---------------------------------------------------------------- */
+/* Work media — peek carousel, step 1: static layout only, no JS.    */
+/* Plain <div>s (no <ul>/<li>) — nothing can grow a list marker.     */
+/* .work-carousel-viewport clips; .work-carousel-track is a flex row */
+/* with 3 equal-width slides centered via justify-content:center —   */
+/* for an odd slide count this is a pure-CSS identity: the middle    */
+/* slide's center always lands exactly on the viewport's center, no  */
+/* matter the slide width or gap, so it reads as "current slide      */
+/* centered, neighbours peeking on both edges" with zero JS. Step 2  */
+/* adds prev/next + drag on top of this once the static layout is    */
+/* confirmed working.                                                */
+/* ---------------------------------------------------------------- */
 
 .work-media {
   position: relative;
   width: 100%;
+}
+
+.work-carousel-viewport {
+  width: 100%;
+  overflow: hidden;
+}
+
+.work-carousel-track {
+  display: flex;
+  /* NOT justify-content:center. js/work-carousel.js positions every
+     slide itself via transform:translate3d(), computed on the
+     assumption that the track's own un-transformed start is flush
+     left (flex-start, the row default) — centering it here too would
+     stack a second, uncontrolled centering on top of the JS one,
+     pushing the "active" slide's real position wildly off past
+     whichever slide the two offsets happen to net out closest to. */
+  align-items: stretch;
+  gap: var(--space-3);
+  cursor: grab;
+  /* Horizontal pan is ours (pointer drag in work-carousel.js); leave
+     vertical scroll to the browser instead of waiting to see which way
+     a touch gesture goes, which reads as janky/unresponsive on mobile. */
+  touch-action: pan-y;
+  /* Belt-and-braces alongside the draggable="false" HTML attribute on
+     .work-media-link/.work-media-asset (see index.html): that attribute
+     alone stops Chrome's native "drag this link/image out of the page"
+     gesture, which was swallowing pointerup entirely and leaving our
+     drag state stuck — this covers browsers that honor the older
+     -webkit-only property instead, and blocks the incidental text
+     selection a fast drag over the caption-adjacent chrome could start. */
+  -webkit-user-drag: none;
+  user-select: none;
+}
+
+.work-carousel-track.is-dragging {
+  cursor: grabbing;
+}
+
+.work-carousel-slide {
+  /* Explicit width alongside flex-basis: belt-and-braces so a slide
+     still has a real size even if a browser mishandles percentage
+     flex-basis inside a gap'd flex row (seen in older WebViews).
+     70% keeps the centered slide the dominant visual while leaving a
+     clearly legible peek (~15% of the viewport) on each side — see
+     js/work-carousel.js, which clones the first/last slide to each
+     end of the track so there's always a real neighbour to peek at,
+     even at the first/last real slide. */
+  flex: 0 0 70%;
+  width: 70%;
+  min-width: 0;
+  /* Scale/opacity/blur below are set inline per-frame by
+     js/work-carousel.js (continuous, based on actual distance from
+     viewport center — not just a fixed "active vs. not" toggle) so the
+     peek slides visibly shrink+dim as they're pushed off-center and
+     grow+sharpen as they glide into the middle. This transition is
+     what makes that inline-style change glide instead of jump; it's
+     switched off (see .is-dragging below) while a drag is live so the
+     slide can track the pointer 1:1 instead of chasing it. */
+  transition: transform var(--duration-slow) var(--ease-standard),
+    opacity var(--duration-slow) var(--ease-standard),
+    filter var(--duration-slow) var(--ease-standard);
+  will-change: transform, opacity;
+}
+
+.work-carousel-track.is-dragging .work-carousel-slide {
+  transition: none;
+}
+
+/* Clones of the first/last real slide (see js/work-carousel.js) exist
+   purely so the peek either side of the boundary slides shows real
+   content instead of empty viewport background — they're never a
+   legitimate navigation target, so keep them out of tab order/AT. */
+.work-carousel-slide[data-clone] {
+  pointer-events: none;
 }
 
 .work-media-link {
@@ -308,11 +563,43 @@ html {
   overflow: hidden;
 }
 
-.work-media-placeholder {
+.work-media-frame {
+  /* Classic intrinsic-ratio box (padding-% is resolved against the
+     containing block's WIDTH, so this needs no `aspect-ratio` support
+     at all) — deliberately not relying on the `aspect-ratio` property
+     alone, since a browser that doesn't support it would leave this
+     box (and everything absolutely positioned inside it) at 0 height. */
+  position: relative;
   width: 100%;
+  height: 0;
+  padding-top: 56.25%; /* 16 / 9 */
   background: var(--deep-2);
+  border: 1px solid rgba(238, 240, 248, 0.3);
+  border-radius: var(--radius-card);
+}
+
+.work-media-placeholder,
+.work-media-asset {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.work-media-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   transition: transform var(--duration-slow) var(--ease-standard),
     filter var(--duration-slow) var(--ease-standard);
+}
+
+.work-media-index {
+  font-family: var(--font-mono);
+  font-size: var(--fs-display-l);
+  color: var(--on-deep-2);
+  opacity: 0.6;
 }
 
 /* Hover/focus feedback lives on the link (the actual click target for
@@ -327,8 +614,9 @@ html {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  width: 40px;
-  height: 40px;
+  z-index: 1;
+  width: 48px;
+  height: 48px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -340,7 +628,7 @@ html {
   -webkit-backdrop-filter: blur(8px);
   color: var(--on-deep);
   font-family: var(--font-body);
-  font-size: 1.25rem;
+  font-size: 1.5rem;
   line-height: 1;
   cursor: pointer;
   transition: background-color var(--duration-fast) var(--ease-standard);
@@ -351,6 +639,12 @@ html {
   background: rgba(8, 17, 96, 0.8);
 }
 
+.work-media-nav:disabled {
+  opacity: 0.35;
+  cursor: default;
+  pointer-events: none;
+}
+
 .work-media-prev {
   left: var(--space-3);
 }
@@ -359,11 +653,45 @@ html {
   right: var(--space-3);
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .work-media-placeholder,
+  .work-carousel-slide {
+    transition: none;
+  }
+}
+
+/* Editorial two-column caption row (see Léo Parpeix): title+hook sit
+   flush left against the carousel's left edge, role+meta sit flush
+   right against its right edge — .work-info spans the same width as
+   .work-media (no max-width of its own) so space-between lines the
+   two columns up with the image above. Stacks to left-aligned rows
+   on narrow screens (see the max-width:640px query). */
 .work-info {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-4);
+}
+
+.work-info-left {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: var(--space-2);
+  /* Still cap the hook text's measure even though the row itself is
+     wide, so paragraphs don't stretch edge-to-edge. */
+  max-width: 640px;
+}
+
+.work-info-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  text-align: right;
+  gap: var(--space-1);
+  flex-shrink: 0;
 }
 
 .work-title {
@@ -409,6 +737,19 @@ html {
   color: var(--on-deep-2);
 }
 
+@media (max-width: 640px) {
+  .work-info {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-3);
+  }
+
+  .work-info-right {
+    align-items: flex-start;
+    text-align: left;
+  }
+}
+
 @media (max-width: 480px) {
   .site-nav {
     padding: var(--space-3) var(--space-4);
@@ -420,9 +761,19 @@ html {
     padding: var(--space-6) var(--space-4);
   }
 
+  .hero-tagline {
+    left: var(--space-4);
+    bottom: var(--space-4);
+  }
+
   .work-media-nav {
     width: 32px;
     height: 32px;
     font-size: 1rem;
+  }
+
+  .work-carousel-slide {
+    flex-basis: 82%;
+    width: 82%;
   }
 }

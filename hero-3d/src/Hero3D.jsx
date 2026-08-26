@@ -6,7 +6,7 @@ import {
   useRef,
   useState,
 } from "react";
-import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { Canvas, useFrame, useThree, invalidate } from "@react-three/fiber";
 import { ContactShadows, Environment, Text3D, Stats } from "@react-three/drei";
 import { MeshTransmissionMaterial } from "@react-three/drei";
 import { EffectComposer, DepthOfField } from "@react-three/postprocessing";
@@ -15,6 +15,17 @@ import { Leva, useControls } from "leva";
 import * as THREE from "three";
 import helvetikerBold from "three/examples/fonts/helvetiker_bold.typeface.json?url";
 import helvetikerBoldData from "three/examples/fonts/helvetiker_bold.typeface.json";
+
+// Standard easeOutExpo — written out directly rather than importing
+// react-spring's `easings` (whose export surface varies by entry point)
+// since this is the only curve needed. Used only for the collapse-to-
+// arranged transition (see Letter's spring config) — the initial fall
+// keeps its physics-spring feel (a "tumbling in" motion suits gravity),
+// this is specifically for making the "收回" (settle to center) read as
+// a deliberate, decelerating glide instead of a springy bounce.
+function easeOutExpo(t) {
+  return t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
+}
 
 const NAME = "LIU YUMO";
 const LETTER_SIZE = 1.3;
@@ -47,6 +58,14 @@ function glyphAdvance(char) {
 // Lowest point letters ever rest at (below the scatter pose's y range) —
 // shared by the scatter layout and the invisible ContactShadows floor.
 const GROUND_Y = -3.25;
+// How far below world y=0 the ARRANGED (settled) word sits — shifts the
+// composition's weight down, opening up headroom above the word. Only
+// the arranged pose uses this (see Letter's arrangedPose below); the
+// scatter layout's hand-tuned, non-overlapping positions are untouched,
+// and DepthOfField's focus target stays at the world origin regardless
+// (DOF blur is driven by camera-to-target distance/depth, not proximity
+// to a 3D point, so a vertical shift here doesn't affect focus).
+const ARRANGED_Y_OFFSET = -1;
 // Glow blobs live on a layer the ContactShadows capture camera doesn't see,
 // so they tint the transmission/reflections without smudging the shadow.
 const GLOW_LAYER = 1;
@@ -57,7 +76,16 @@ const GLOW_LAYER = 1;
 // of the earlier cyan-leaning sky blue (~205°). Edge color reuses the
 // existing --hi token so the hero stays in the same family as the rest of
 // the site's palette.
-function useBrandGradientTexture(inner = "#C3CFFA", outer = "#4C6FFF", size = 512) {
+//
+// inner was #C3CFFA (very pale, near-white lavender) covering the FULL
+// radius (only 2 stops, 0 and 1) — since the letters sit right in front
+// of this, centered, that bright core was washing out the middle glyphs
+// (Y/U) against the camera's straight-on view of it. Dimmed toward outer
+// (less contrast, not "off") and given a third stop at 0.35 so the
+// brightened core only occupies the innermost ~35% of the radius instead
+// of ramping all the way to the edge — a smaller, softer hot spot behind
+// the word instead of one big wash across the whole backdrop.
+function useBrandGradientTexture(inner = "#96ABFB", outer = "#4C6FFF", size = 512) {
   return useMemo(() => {
     const canvas = document.createElement("canvas");
     canvas.width = size;
@@ -68,6 +96,7 @@ function useBrandGradientTexture(inner = "#C3CFFA", outer = "#4C6FFF", size = 51
       size / 2, size / 2, size / 2,
     );
     gradient.addColorStop(0, inner);
+    gradient.addColorStop(0.35, outer);
     gradient.addColorStop(1, outer);
     ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, size, size);
@@ -77,109 +106,55 @@ function useBrandGradientTexture(inner = "#C3CFFA", outer = "#4C6FFF", size = 51
   }, [inner, outer, size]);
 }
 
-// Colored accents behind AND in front of the letters — real, opaque
-// geometry (see note below on why it must stay opaque). Split into three
-// layers at different depths (far background, near foreground, plus
-// ReflectionAccents' envmap-only spheres further below) so a real
-// DepthOfField pass (see Hero3D component) can blur near and far alike
-// while the letters' own depth stays in focus — that's what actually sells
-// "this is transparent glass" rather than "these are pale shapes". Colors
-// mixed ~40% toward white (not toward the indigo background — mixing warm
-// hues straight into blue just muddies them). Positions are pushed to the
-// corners/edges, clear of both the scattered layout's footprint and the
-// arranged word's central band, so there's a clean patch directly behind
-// "LIU YUMO".
+// Composition anchor — real, opaque geometry (see note below on why it
+// must stay opaque). The ONLY decorative shape left in the scene now —
+// no accent blocks, no drift, nothing else.
 //
 // Why opaque at all: THREE's native transmission pre-pass
 // (WebGLRenderer.renderTransmissionPass) only renders `opaqueObjects` into
 // the buffer the glass samples — anything with `transparent: true` is
 // skipped from that capture entirely, regardless of how it looks. An
 // earlier soft-blob version used alpha blending and was invisible to
-// transmission because of exactly this. Circles/rectangles with solid
-// color and no alpha channel stay classified as opaque and actually show
-// up when the glass refracts them.
-// Background layer — far behind the letters (z very negative).
-const BACKDROP_STRIPES = [
-  { color: "#FFC59C", position: [-5.5, 3.2, -7], size: [15, 0.85], rotationZ: -0.3, driftSpeed: 0.03, phase: 0 }, // pastel orange
-  { color: "#D7D1F7", position: [5.8, -2.6, -8], size: [13, 0.65], rotationZ: 0.28, driftSpeed: 0.026, phase: 1.7 }, // pastel violet
-];
-
-const BACKDROP_BLOCKS = [
-  { color: "#FFE8C6", position: [6.3, 2.8, -7.5], radius: 1.7, driftSpeed: 0.036, phase: 0.8 }, // pastel gold
-  { color: "#B2E8F1", position: [-6.3, -2.4, -8.5], radius: 1.5, driftSpeed: 0.031, phase: 2.6 }, // pastel cyan
-  { color: "#FFA8DD", position: [0.3, 3.6, -9], radius: 1.3, driftSpeed: 0.04, phase: 4.5 }, // pastel pink
-];
-
-// Foreground layer — between the letters and the camera (z positive),
-// pushed to the frame edges/corners so they never sit over the letters
-// themselves. This is what makes the depth of field read as real depth
-// instead of just "background blur": with DepthOfField focused on the
-// letters, near objects defocus at least as fast as far ones, so these
-// read as big, soft color washes framing the shot — the classic
-// "shooting through foreground bokeh" look. Richer/more saturated than
-// the background pastels since the blur will mute them anyway.
-const FOREGROUND_BLOCKS = [
-  { color: "#FFB37A", position: [-8.6, -2.6, 3.4], radius: 2.9, driftSpeed: 0.022, phase: 0.4 }, // warm orange
-  { color: "#8FD8F2", position: [8.4, 2.6, 3.0], radius: 2.6, driftSpeed: 0.019, phase: 2.3 }, // cyan
-  { color: "#D6A8F0", position: [-7.6, 3.4, 4.1], radius: 2, driftSpeed: 0.025, phase: 3.9 }, // violet
-];
-
-const DRIFT_AMP = 0.3;
+// transmission because of exactly this. Solid color with no alpha channel
+// stays classified as opaque and actually shows up when the glass
+// refracts it.
+//
+// A shallow ARC, not a full ball: sphereGeometry's own thetaStart/
+// thetaLength args select just a small cap near the sphere's "north
+// pole" directly (radius stays real/large — HERO_ARC_RADIUS — only the
+// swept angle, HERO_ARC_THETA, is small), instead of a non-uniformly
+// scaled ellipsoid — that would flatten the actual curvature/shading
+// falloff along with the shape, which is exactly what "still has real
+// spherical volume, not a flat ellipse" rules out. A cap this shallow
+// naturally reads as wide + low, like a sliver of a sun on the horizon,
+// with the letters floating in front of it. Deliberately positioned by
+// its APEX (see the mesh position math below) rather than guessed
+// against the camera's framing — cap width/height are then just
+// geometry (radius × trig on theta), not trial and error.
+const HERO_ARC_RADIUS = 5.5;
+const HERO_ARC_THETA = 0.44; // ~25°: cap ≈ 4.7 wide × 0.5 tall
+const HERO_ARC_APEX = { x: 0, y: -1.2, z: -4.5 }; // apex sits toward the letters' lower-middle
+const HERO_ARC_COLOR = "#FF9A44";
 
 function BackdropAccents() {
-  const stripeRefs = useRef([]);
-  const blockRefs = useRef([]);
-  const foregroundRefs = useRef([]);
-
-  useFrame((state) => {
-    const t = state.clock.elapsedTime;
-    const drift = (item, m) => {
-      if (!m) return;
-      m.position.x = item.position[0] + Math.sin(t * item.driftSpeed + item.phase) * DRIFT_AMP;
-      m.position.y = item.position[1] + Math.cos(t * item.driftSpeed * 0.8 + item.phase) * DRIFT_AMP * 0.7;
-    };
-    BACKDROP_STRIPES.forEach((s, i) => drift(s, stripeRefs.current[i]));
-    BACKDROP_BLOCKS.forEach((b, i) => drift(b, blockRefs.current[i]));
-    FOREGROUND_BLOCKS.forEach((b, i) => drift(b, foregroundRefs.current[i]));
-  });
-
   return (
-    <>
-      {BACKDROP_STRIPES.map((s, i) => (
-        <mesh
-          key={`stripe-${i}`}
-          ref={(el) => (stripeRefs.current[i] = el)}
-          position={s.position}
-          rotation={[0, 0, s.rotationZ]}
-          layers={GLOW_LAYER}
-        >
-          <planeGeometry args={s.size} />
-          <meshBasicMaterial color={s.color} toneMapped={false} />
-        </mesh>
-      ))}
-      {BACKDROP_BLOCKS.map((b, i) => (
-        <mesh
-          key={`block-${i}`}
-          ref={(el) => (blockRefs.current[i] = el)}
-          position={b.position}
-          layers={GLOW_LAYER}
-        >
-          <circleGeometry args={[b.radius, 32]} />
-          <meshBasicMaterial color={b.color} toneMapped={false} />
-        </mesh>
-      ))}
-      {FOREGROUND_BLOCKS.map((b, i) => (
-        <mesh
-          key={`fg-${i}`}
-          ref={(el) => (foregroundRefs.current[i] = el)}
-          position={b.position}
-          layers={GLOW_LAYER}
-        >
-          <circleGeometry args={[b.radius, 32]} />
-          <meshBasicMaterial color={b.color} toneMapped={false} />
-        </mesh>
-      ))}
-    </>
+    // Standard (lit) material — gives the arc real dimensional shading
+    // from the scene's existing lights instead of a flat colored patch.
+    // roughness raised well past the earlier full-sphere version (0.45
+    // -> 0.85) and metalness dropped to 0: a duller, softer specular so
+    // it doesn't compete with the glass letters for "shiny" — the glass
+    // is the only thing in frame that should read as sharply reflective.
+    // Sitting further back in z than before (-3.5 -> -4.5) also pulls it
+    // further outside DepthOfField's focusRange, so it renders visibly
+    // softened/out-of-focus — a cheap stand-in for a real blur pass,
+    // reusing the postprocessing chain that's already running.
+    <mesh
+      position={[HERO_ARC_APEX.x, HERO_ARC_APEX.y - HERO_ARC_RADIUS, HERO_ARC_APEX.z]}
+      layers={GLOW_LAYER}
+    >
+      <sphereGeometry args={[HERO_ARC_RADIUS, 64, 12, 0, Math.PI * 2, 0, HERO_ARC_THETA]} />
+      <meshStandardMaterial color={HERO_ARC_COLOR} roughness={0.85} metalness={0} />
+    </mesh>
   );
 }
 
@@ -299,20 +274,21 @@ function Letter({
   dropDelay,
   glass,
   reduceMotion,
-  mouseInfluence,
   arranged,
+  onAnimatingChange,
 }) {
   const group = useRef(null);
+  const wasAnimatingRef = useRef(false);
   const { w, h } = useMemo(() => glyphMetrics(char), [char]);
 
   // arrangedX is the glyph's left-edge cursor position (from useLetterLayout);
   // convert to a center position so it matches the center-pivot group below.
-  // y: 0 puts the glyph's own vertical center at world y=0 (the group's
-  // position IS the glyph's center thanks to the center-pivot offset below),
-  // so the arranged word sits truly vertically centered, not just baseline-
-  // at-zero (which sat visibly above center).
+  // y: ARRANGED_Y_OFFSET (not 0) puts the glyph's own vertical center that
+  // far below world y=0 (the group's position IS the glyph's center thanks
+  // to the center-pivot offset below) — shifted down from dead-center on
+  // purpose, see ARRANGED_Y_OFFSET's own comment.
   const arrangedPose = useMemo(
-    () => ({ x: arrangedX + w / 2, y: 0, z: 0, rotX: 0, rotY: 0, rotZ: 0 }),
+    () => ({ x: arrangedX + w / 2, y: ARRANGED_Y_OFFSET, z: 0, rotX: 0, rotY: 0, rotZ: 0 }),
     [arrangedX, w],
   );
   const scatteredPose = useMemo(
@@ -339,24 +315,54 @@ function Letter({
     from: reduceMotion ? target : fallFrom,
     delay: reduceMotion ? 0 : dropDelay,
     immediate: reduceMotion,
-    config: { mass: 2, tension: 170, friction: 22 },
+    // Physics spring for the fall (a "tumbling in" motion suits gravity —
+    // mass/tension/friction is what gives it that slight overshoot/settle
+    // feel) but a duration+easing curve for the collapse-to-arranged
+    // transition: `arranged` is exactly the flag that also picks which
+    // pose `target` above resolves to, so this branches on the same
+    // condition and switches configs the instant the word starts
+    // collapsing to center. easeOutExpo reads as a deliberate,
+    // decelerating glide — no bounce/overshoot — which is what "自然减速"
+    // asked for specifically for the retract, not the fall.
+    config: arranged
+      ? { duration: 850, easing: easeOutExpo }
+      : { mass: 2, tension: 170, friction: 22 },
   });
 
-  useFrame((state) => {
+  useFrame(() => {
     const g = group.current;
     if (!g) return;
-    g.position.set(spring.x.get(), spring.y.get(), spring.z.get());
-    let rx = spring.rotX.get();
-    let ry = spring.rotY.get();
-    const rz = spring.rotZ.get();
-    // Only tilt toward the cursor while scattered — once arranged, the word
-    // should read as a straight, centered logo, not lean with the mouse.
-    if (mouseInfluence > 0 && !arranged) {
-      const { x: px, y: py } = state.pointer;
-      ry += px * mouseInfluence;
-      rx += -py * mouseInfluence * 0.6;
+    // Perf: frameloop="demand" only renders when invalidate() is called.
+    // Every spring key transitions together (fall-in, arrange<->scatter),
+    // but not every key necessarily changes value in every transition (e.g.
+    // only y/rotX move during the fall), so checking a single key would
+    // miss some — check all six and keep asking for frames while any is
+    // still interpolating. Once every key settles this stops on its own —
+    // and nothing else asks for a frame afterward (see Hero3D: mouse
+    // movement no longer invalidates once arranged), so the letters then
+    // sit completely still, rendering zero further frames until the next
+    // scroll or resize.
+    const animating =
+      spring.x.isAnimating ||
+      spring.y.isAnimating ||
+      spring.z.isAnimating ||
+      spring.rotX.isAnimating ||
+      spring.rotY.isAnimating ||
+      spring.rotZ.isAnimating;
+    if (animating) invalidate();
+    // Edge-triggered (only on true<->false flips, not every frame) report
+    // up to Scene, which aggregates all 7 letters into one shared "is
+    // anything still moving" flag — that's what drives the temporary
+    // transmission quality drop during the fall/collapse (see Scene's
+    // glassLive). A per-frame report would just be 7x redundant state
+    // churn; this only fires ~3 times per letter across the whole
+    // entrance+collapse sequence.
+    if (animating !== wasAnimatingRef.current) {
+      wasAnimatingRef.current = animating;
+      onAnimatingChange(animating);
     }
-    g.rotation.set(rx, ry, rz);
+    g.position.set(spring.x.get(), spring.y.get(), spring.z.get());
+    g.rotation.set(spring.rotX.get(), spring.rotY.get(), spring.rotZ.get());
   });
 
   return (
@@ -392,7 +398,32 @@ function Letter({
   );
 }
 
-function Scene({ arranged }) {
+// Mounts (and stays mounted — it's declarative, no imperative "did this
+// already fire" bookkeeping needed) only once its parent <Suspense> has
+// actually resolved, i.e. once the font/geometry work behind the letters
+// is done. That's the signal Hero3D uses to fade the static preload
+// placeholder out — tying it to Suspense resolving (not e.g. a fixed
+// timeout, or Canvas's onCreated, which fires before Suspense children
+// are ready) means the crossfade happens exactly when there's something
+// real to show, on fast and slow devices alike.
+function ReadySignal({ onReady }) {
+  useEffect(() => {
+    onReady();
+  }, [onReady]);
+  return null;
+}
+
+
+// Dropped during the fall/collapse only (see Scene's glassLive) —
+// transmission sampling is the single biggest GPU cost in this scene (a
+// full extra render pass per sample, per glass surface), and it's
+// spent on detail that's genuinely invisible while seven letters are
+// tumbling/gliding across the frame. Restored to the real (Leva)
+// values the instant nothing is animating.
+const LOW_QUALITY_RESOLUTION = 128;
+const LOW_QUALITY_SAMPLES = 2;
+
+function Scene({ arranged, onReady }) {
   const { letters, totalWidth } = useLetterLayout();
   const reduceMotion = useMemo(
     () =>
@@ -401,20 +432,57 @@ function Scene({ arranged }) {
     [],
   );
 
+  // Aggregates all 7 letters' individual animating flags into one "is
+  // anything still moving" bit. A ref-based counter (not 7 separate
+  // booleans in state) so the up/down edges from different letters can't
+  // race each other — React state updates from inside useFrame are
+  // fine as long as they're rare (this fires only ~3x per letter across
+  // the whole entrance+collapse sequence, not every frame).
+  const [lowQuality, setLowQuality] = useState(true);
+  const animatingCountRef = useRef(0);
+  const handleAnimatingChange = useCallback((isAnimatingNow) => {
+    animatingCountRef.current += isAnimatingNow ? 1 : -1;
+    setLowQuality(animatingCountRef.current > 0);
+  }, []);
+
   const glass = useControls("玻璃材质 glass", {
-    // Thick, strongly refractive crystal: full transmission, thickness high
-    // enough to visibly warp what's behind it, near-zero roughness for
-    // crisp edges, and a strong chromatic fringe (visible red/green/violet
-    // split at edges, not just a faint tint).
-    transmission: { value: 1, min: 0, max: 1 },
-    thickness: { value: 3, min: 0, max: 5 },
+    // Thick, strongly refractive crystal — near-zero roughness for crisp
+    // edges, and a strong chromatic fringe (visible red/green/violet
+    // split at edges, not just a faint tint). transmission was 1 (fully
+    // see-through) — at the outer letters (L, O), which sit further from
+    // HERO_ARC's warm color and mostly refract flat background blue, that
+    // read as "no letter there at all," not glass. Dropped to 0.85 so
+    // every letter keeps a bit of its own body/color instead of vanishing
+    // into whatever's behind it; thickness bumped 3 -> 3.6 alongside it —
+    // more internal volume for that reduced transmission to tint through,
+    // which is what actually keeps letters reading as "thick and solid"
+    // rather than just "less see-through."
+    transmission: { value: 0.85, min: 0, max: 1 },
+    thickness: { value: 3.6, min: 0, max: 5 },
     roughness: { value: 0, min: 0, max: 1 },
     chromaticAberration: { value: 0.55, min: 0, max: 0.6 },
     ior: { value: 1.5, min: 1, max: 2.4 },
-    samples: { value: 6, min: 1, max: 16, step: 1 },
-    resolution: { value: 512, min: 32, max: 1024, step: 32 },
+    // Perf: transmission sampling is the single biggest GPU cost in this
+    // scene (a full extra render pass per sample, per glass surface).
+    // 256/4 reads visually identical to 512/6 at this letter scale — the
+    // blur from chromaticAberration + roughness already hides the
+    // difference — for roughly a 3x cheaper transmission pass.
+    samples: { value: 4, min: 1, max: 16, step: 1 },
+    resolution: { value: 256, min: 32, max: 1024, step: 32 },
     transmissionSampler: true,
   });
+
+  // The actual per-frame prop each Letter gets — same object as `glass`
+  // whenever nothing's animating, swapped for the cheap resolution/
+  // samples pair while the fall/collapse is in motion. Recomputed only
+  // when `glass` or `lowQuality` actually change (not every render).
+  const glassLive = useMemo(
+    () =>
+      lowQuality
+        ? { ...glass, resolution: LOW_QUALITY_RESOLUTION, samples: LOW_QUALITY_SAMPLES }
+        : glass,
+    [glass, lowQuality],
+  );
 
   const scene = useControls("场景 scene", {
     envPreset: {
@@ -424,13 +492,17 @@ function Scene({ arranged }) {
       options: ["city", "night", "studio", "warehouse", "dawn"],
     },
     dropStagger: { value: 80, min: 0, max: 300, step: 10 },
-    mouseInfluence: { value: 0.25, min: 0, max: 1 },
   });
 
   const bgTexture = useBrandGradientTexture();
 
   return (
     <>
+      {/* Was briefly tightened to 1.4 (word filling ~71% of frame width)
+          to make the word read as the clear visual lead over the backdrop
+          accents — reverted back to 1.9 (~53% of frame width): at 1.4 the
+          word ran too close to the left/right edges, not enough breathing
+          room on the sides. */}
       <FitCamera width={totalWidth} margin={1.9} />
       <primitive attach="background" object={bgTexture} />
       {/* brighter fill to match the bright indigo backdrop — shadow sides
@@ -453,8 +525,10 @@ function Scene({ arranged }) {
           <ReflectionAccents />
         </Environment>
       </Suspense>
-      {/* sharp-edged colored backdrop for the glass to actually refract —
-          see BackdropAccents above */}
+      {/* the warm arc for the glass to actually refract — see
+          BackdropAccents above. Fully static (no drift, no useFrame at
+          all), same as the letters below once settled — nothing in this
+          scene reacts to the mouse. */}
       <BackdropAccents />
       {/* invisible floor: renders nothing but the baked contact shadow itself.
           far is capped to the letters' real travel range so it stays under
@@ -476,15 +550,64 @@ function Scene({ arranged }) {
             arrangedX={l.x}
             scatter={SCATTER_LAYOUT[i]}
             dropDelay={i * scene.dropStagger}
-            glass={glass}
+            glass={glassLive}
             reduceMotion={reduceMotion}
-            mouseInfluence={scene.mouseInfluence}
             arranged={arranged}
+            onAnimatingChange={handleAnimatingChange}
           />
         ))}
+        {/* Only the letters' own readiness gates the preload crossfade —
+            not <Environment>'s separate Suspense above, which fetches an
+            HDR over the network and would otherwise hold the placeholder
+            up for however long that request takes (or hangs, if offline).
+            The environment's reflections upgrade invisibly on top of an
+            already-visible scene instead. */}
+        <ReadySignal onReady={onReady} />
       </Suspense>
     </>
   );
+}
+
+// Scroll distance (px) past which the hero freezes: stops the render loop
+// and applies a CSS blur/dim, so a fast scroll-past doesn't compete with
+// scroll compositing for GPU time. Deliberately small — this should fire
+// almost as soon as the user starts scrolling, well before hero is
+// anywhere near covered (that's the separate, later heroVisible/sentinel
+// check below), not as a "scrolled most of the way past" threshold.
+const SCROLL_FREEZE_PX = 40;
+
+// Cheap, synchronous "should this device even attempt WebGL 3D" check —
+// deliberately conservative (only flags cases that are near-certain to be
+// a bad experience) rather than trying to score GPU performance, which
+// has no reliable cross-browser signal. Two checks:
+//  1. No WebGL context at all (old/locked-down browser) — an instant no.
+//  2. A software rasterizer (SwiftShader/llvmpipe/etc, exposed via the
+//     WEBGL_debug_renderer_info extension) — technically "supports"
+//     WebGL but renders every frame on the CPU, which is worse than no
+//     3D at all for a scene this GPU-heavy (transmission + DOF passes).
+// Runs once (called from a lazy useState initializer in Hero3D below),
+// not on every render — creating a throwaway canvas + GL context isn't
+// free.
+function detectWeakDevice() {
+  if (typeof document === "undefined") return false;
+  try {
+    const canvas = document.createElement("canvas");
+    const gl =
+      canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
+    if (!gl) return true;
+    const debugInfo = gl.getExtension("WEBGL_debug_renderer_info");
+    if (debugInfo) {
+      const renderer = String(
+        gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL) || "",
+      );
+      if (/swiftshader|llvmpipe|software/i.test(renderer)) return true;
+    }
+    return false;
+  } catch {
+    // Any failure creating/querying the context: treat as unsupported
+    // rather than risk mounting a Canvas that's about to throw.
+    return true;
+  }
 }
 
 function StaticFallback() {
@@ -509,9 +632,108 @@ function StaticFallback() {
   );
 }
 
+// Loading placeholder shown over the Canvas until the glass letters are
+// actually ready (see ReadySignal), then crossfaded out. Deliberately
+// mirrors index.html's own pre-JS `.hero-fallback` markup (same copy,
+// same rough layout) so the handoff from "static HTML before React
+// mounts" to "this overlay, while React's 3D scene loads" is invisible —
+// and deliberately all inline/hardcoded (not var(--deep) etc. or the
+// site's utility classes) since this component also has to render
+// correctly in the standalone hero-3d dev preview, which never loads the
+// root site's stylesheet.
+function PreloadOverlay({ visible, reduceMotion }) {
+  return (
+    <div
+      aria-hidden={!visible}
+      style={{
+        position: "absolute",
+        inset: 0,
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "flex-start",
+        justifyContent: "center",
+        gap: "1.5rem",
+        padding: "6rem 3rem",
+        background: "#081160", // --deep
+        color: "#EEF0F8", // --on-deep
+        opacity: visible ? 1 : 0,
+        transition: reduceMotion ? "none" : "opacity 600ms ease",
+        pointerEvents: visible ? "auto" : "none",
+      }}
+    >
+      <p
+        style={{
+          margin: 0,
+          fontFamily: "monospace",
+          fontSize: "0.8rem",
+          letterSpacing: "0.06em",
+          textTransform: "uppercase",
+          color: "#6E8BFF", // --hi-on-deep
+        }}
+      >
+        Phase 4
+      </p>
+      <h1
+        style={{
+          margin: 0,
+          fontFamily: "sans-serif",
+          fontWeight: 700,
+          fontSize: "clamp(2.25rem, 1.6rem + 2.9vw, 3.05rem)", // --fs-display-l
+          lineHeight: 1.1,
+        }}
+      >
+        刘予墨 · Liu Yumo
+      </h1>
+    </div>
+  );
+}
+
+// Auto-collapse delay (ms): how long the letters stay in their fallen,
+// scattered pose before automatically arranging into the centered "LIU
+// YUMO" logo — no click needed. Sized to comfortably clear the fall-in
+// animation's own timing (last letter's dropDelay, i * dropStagger's
+// default 80ms * 6 = 480ms, plus that spring's settle time) with a short
+// beat afterward so the scattered pose actually reads before it collapses.
+const AUTO_ARRANGE_DELAY_MS = 2600;
+// How long AFTER `arranged` flips true the letters are actually done
+// moving: the collapse-to-arranged spring's own duration (850ms, see the
+// `arranged` branch of Letter's spring config) plus a short buffer for
+// its trailing settle. index.html's cursor-ball layer
+// (js/hero-cursor.js) waits for the "hero:settled" event fired below
+// before it starts its own rAF draw loop — that loop is real per-frame
+// canvas work, and the fall-in + collapse stretch is already the
+// single busiest/jankiest part of this scene, so it deliberately sits
+// out until there's nothing else left to compete with.
+const HERO_SETTLE_DELAY_MS = 1000;
+
 export default function Hero3D() {
   const [isMobile, setIsMobile] = useState(false);
   const [arranged, setArranged] = useState(false);
+  // Assume visible until proven otherwise — avoids a black/frozen flash on
+  // mount, and is the correct fallback for the standalone hero-3d dev
+  // preview, which has no #hero-cover-sentinel (see below) and so never
+  // flips this.
+  const [heroVisible, setHeroVisible] = useState(true);
+  // Computed once (lazy initializer, not on every render) rather than
+  // useMemo-with-deps: neither input can change during the component's
+  // life (the OS motion setting and the device's GL capabilities are both
+  // fixed for the session), so there's nothing to re-derive.
+  const [reduceMotion] = useState(
+    () =>
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+  );
+  const [isWeakDevice] = useState(() => detectWeakDevice());
+  // Scroll-to-freeze (see the scrollY effect below): true once the user
+  // has scrolled past SCROLL_FREEZE_PX, well before hero is anywhere near
+  // covered. Distinct from heroVisible (which tracks full coverage) —
+  // this fires almost immediately on any scroll, to free up the GPU for
+  // scroll compositing rather than racing it.
+  const [scrolledPast, setScrolledPast] = useState(false);
+  // Gates the preload-placeholder crossfade (see PreloadOverlay/ReadySignal)
+  // — flips true once the letters' Suspense boundary has actually resolved.
+  const [ready, setReady] = useState(false);
+  const handleReady = useCallback(() => setReady(true), []);
 
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < 768);
@@ -520,48 +742,218 @@ export default function Hero3D() {
     return () => window.removeEventListener("resize", check);
   }, []);
 
-  const toggleArranged = useCallback(() => setArranged((a) => !a), []);
+  // Auto-arrange: no click needed, and no toggle back to scattered — the
+  // letters fall in, hold their scattered pose for a beat, then collapse
+  // into the centered logo on their own and sit there, fully still,
+  // afterward. No post-arrange mouse interaction in this scene at all
+  // (tried both per-letter parallax + a moving light, and later a
+  // whole-word tilt — both removed; real-time WebGL response to mouse
+  // move cost a full extra frame, transmission+DOF passes included, per
+  // move). index.html's 2D ball-trail layer (js/hero-cursor.js) is the
+  // only thing that still reacts to the mouse, blended on top via
+  // mix-blend-mode — zero 3D re-renders involved.
+  useEffect(() => {
+    const id = setTimeout(() => setArranged(true), AUTO_ARRANGE_DELAY_MS);
+    return () => clearTimeout(id);
+  }, []);
 
-  if (isMobile) return <StaticFallback />;
+  // Explicit kick so the collapse-to-arranged spring transition actually
+  // starts rendering the instant it begins, the same way scrolledPast/
+  // heroVisible resuming do below — depending on the state change alone
+  // to ripple into a render (via React's commit -> Letter's useFrame ->
+  // its own animating-check invalidate() chain) proved unreliable in
+  // practice: without this, the transition could complete its math with
+  // zero frames actually drawn, so the letters would just appear to
+  // vanish until something else (e.g. a mouse move) finally triggered a
+  // render showing the already-settled result.
+  useEffect(() => {
+    if (arranged) invalidate();
+  }, [arranged]);
+
+  // Fires once the collapse has actually finished (not the instant it
+  // starts — `arranged` flips at the START of that spring transition).
+  // A plain DOM event, not React state/context: js/hero-cursor.js is a
+  // deliberately separate vanilla script (see its own file header) with
+  // no reference to this React tree at all, so a window event is the
+  // only channel between them. Runs in every render path, including
+  // StaticFallback/reduceMotion/isWeakDevice below — arranged's own
+  // timer already fires unconditionally (hooks can't be behind that
+  // branch), and hero-cursor.js independently bails on reduced-motion
+  // and mobile itself, so this only ever matters where it should.
+  useEffect(() => {
+    if (!arranged) return;
+    const id = setTimeout(() => {
+      window.dispatchEvent(new Event("hero:settled"));
+    }, HERO_SETTLE_DELAY_MS);
+    return () => clearTimeout(id);
+  }, [arranged]);
+
+  // Perf: freezes the render loop and (via the filter style below) blurs
+  // + dims the canvas as soon as the user starts scrolling — not just
+  // once hero is mostly/fully covered (that's heroVisible, further down).
+  // A scroll gesture immediately competes with the GPU for compositing
+  // time, so this deliberately fires early (SCROLL_FREEZE_PX is small)
+  // rather than waiting until hero is nearly out of view. Separate effect
+  // from the sentinel one below (rather than folding the threshold check
+  // into that effect) so this still works even in contexts without a
+  // #hero-cover-sentinel, e.g. the standalone dev preview.
+  useEffect(() => {
+    let ticking = false;
+    const check = () => {
+      ticking = false;
+      setScrolledPast(window.scrollY > SCROLL_FREEZE_PX);
+    };
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(check);
+    };
+    check();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  // Mirrors the heroVisible resume behavior below: frameloop is about to
+  // flip from "never" back to "demand" (see the Canvas prop), which
+  // renders nothing until something calls invalidate() — without this,
+  // scrolling back to the top would leave the canvas frozen on its last
+  // frame instead of resuming immediately.
+  useEffect(() => {
+    if (!scrolledPast) invalidate();
+  }, [scrolledPast]);
+
+  // Perf: hero sits behind About via position:sticky (see css/home.css) —
+  // once scrolled past, hero's own bounding box never leaves the viewport
+  // (sticky keeps it pinned), so hero can't tell "am I visible" about
+  // itself. #hero-cover-sentinel lives at About's top edge instead: it
+  // leaves the viewport (from the top) at the exact scroll position where
+  // About's opaque box has risen up to fully cover hero. That's the signal
+  // to fully stop the R3F render loop (frameloop="never") — not just slow
+  // it down — since hero is 100% hidden and every render is otherwise
+  // wasted GPU/CPU work competing with scroll compositing.
+  useEffect(() => {
+    const sentinel = document.getElementById("hero-cover-sentinel");
+    if (!sentinel) return;
+    // A plain scroll listener (rAF-throttled) instead of an
+    // IntersectionObserver: the observer only calls back when the
+    // sentinel's intersection ratio actually crosses a threshold, but on
+    // a page that currently ends right at "About fully covers hero" (no
+    // content below About yet), the sentinel scrolls from fully-visible
+    // straight to exactly boundingClientRect.top === 0 and stops there —
+    // that transition never crosses the isIntersecting boundary (a 1px
+    // element sitting exactly at the viewport's top edge still counts as
+    // intersecting), so the observer's "hero is now hidden" callback would
+    // never fire and the render loop would idle forever instead of fully
+    // stopping. Reading the rect directly on scroll has no such edge case.
+    let ticking = false;
+    const check = () => {
+      ticking = false;
+      const visible = sentinel.getBoundingClientRect().top > 0;
+      setHeroVisible(visible);
+      // frameloop flips straight from "never" to "demand" below, which
+      // renders nothing until something calls invalidate() — without
+      // this, scrolling back up would show a frozen/stale canvas instead
+      // of resuming the scene immediately.
+      if (visible) invalidate();
+    };
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(check);
+    };
+    check();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  // Three independent reasons to skip WebGL entirely and never mount
+  // <Canvas>, not just degrade it: too small a viewport to show the full
+  // composition well (isMobile), the user asked for less motion
+  // (reduceMotion — "respect prefers-reduced-motion" here means the
+  // static image, not just skipping the individual entrance/drift
+  // animations while still running a live 3D render loop), or the device
+  // can't push this scene's transmission/DOF cost without becoming the
+  // janky part of the page (isWeakDevice). All three get the exact same
+  // treatment on purpose — there's no degraded-but-still-3D middle tier.
+  if (isMobile || reduceMotion || isWeakDevice) return <StaticFallback />;
 
   return (
     <div style={{ position: "relative", width: "100%", height: "100%" }}>
-      <Canvas
-        dpr={[1, 1.75]}
-        camera={{ position: [0, 0, 11], fov: 32, rotation: [-0.1, 0, 0] }}
-        style={{ width: "100%", height: "100%", cursor: "pointer" }}
-        onClick={toggleArranged}
-        onCreated={(state) => state.camera.layers.enable(GLOW_LAYER)}
-      >
-        <Scene arranged={arranged} />
-        {/* target [0,0,0] is where the letters live — DepthOfField reads the
-            live camera-to-target distance every frame, so focus stays
-            correct even though FitCamera moves the camera on resize.
-            focusRange is in world units either side of that point: 1.4
-            comfortably covers every letter's depth (they only ever span
-            roughly ±0.5 units) while the foreground/background accent
-            layers (2-9 units away) fall well outside it and blur. */}
-        <EffectComposer>
-          <DepthOfField target={[0, 0, 0]} focusRange={1.4} bokehScale={4} />
-        </EffectComposer>
-        {/* dev-only fps counter — never ships in the production/embedded build */}
-        {import.meta.env.DEV && <Stats />}
-      </Canvas>
       <div
         style={{
-          position: "absolute",
-          right: "1rem",
-          bottom: "1rem",
-          color: "rgba(8, 17, 96, 0.6)",
-          fontFamily: "sans-serif",
-          fontSize: "0.75rem",
-          letterSpacing: "0.03em",
-          pointerEvents: "none",
-          userSelect: "none",
+          width: "100%",
+          height: "100%",
+          // Perf + UX: as soon as scrolling starts (scrolledPast), the
+          // Canvas prop below has already frozen the render loop on
+          // whatever frame was last drawn — this filter is what turns
+          // that frozen frame into a deliberate "stepped back" visual
+          // instead of just a stale-looking static image, while scroll
+          // compositing gets the GPU headroom the paused render loop just
+          // freed up.
+          filter: scrolledPast ? "blur(6px) brightness(0.8)" : "none",
+          transition: reduceMotion ? "none" : "filter 400ms ease",
         }}
       >
-        {arranged ? "click to scatter / 点击散开" : "click to arrange / 点击排列"}
+        <Canvas
+          // Perf: high-DPR screens (2x/3x) were rendering 4-9x the pixels for
+          // no visible gain at this content scale — 1.5 is the point where
+          // pixel-doubling stops being perceptible on a glass/blur-heavy scene
+          // but still costs meaningfully less than the old 1.75 ceiling.
+          dpr={[1, 1.5]}
+          camera={{ position: [0, 0, 11], fov: 32, rotation: [-0.1, 0, 0] }}
+          // No inline cursor style: index.html's own hero-cursor script
+          // (js/hero-cursor.js) sets `cursor: none` on #hero while active
+          // and draws its own 2D ball trail instead — leaving this unset
+          // lets that rule apply cleanly, and lets the plain default
+          // cursor show through on devices/motion settings where that
+          // script bails.
+          style={{ width: "100%", height: "100%" }}
+          // Deliberately no onPointerMove here — this scene reads the
+          // pointer nowhere anymore (no per-letter parallax, no moving
+          // light, no whole-word tilt; all removed), so there is nothing
+          // for a move to invalidate. Once the fall/arrange entrance
+          // settles, only a scroll or resize should ever draw another
+          // frame.
+          onCreated={(state) => state.camera.layers.enable(GLOW_LAYER)}
+          // Perf: "demand" only renders when invalidate() is called (see
+          // the spring/backdrop invalidate() calls above) instead of
+          // rendering every rAF tick regardless of whether anything
+          // changed — this is the biggest win for a scene that sits
+          // completely still once arranged. Fully "never" once hero has
+          // scrolled out of view (heroVisible) OR once the user has
+          // started scrolling at all (scrolledPast) — either one alone is
+          // enough to stop rendering; "never" freezes on the last drawn
+          // frame rather than clearing it.
+          frameloop={heroVisible && !scrolledPast ? "demand" : "never"}
+        >
+          <Scene arranged={arranged} onReady={handleReady} />
+          {/* target [0,0,0] is where the letters live — DepthOfField reads the
+              live camera-to-target distance every frame, so focus stays
+              correct even though FitCamera moves the camera on resize.
+              focusRange is in world units either side of that point: 1.4
+              comfortably covers every letter's depth (they only ever span
+              roughly ±0.5 units) while the foreground/background accent
+              layers (2-9 units away) fall well outside it and blur.
+              multisampling knocked down from EffectComposer's default 8 to 4
+              — visibly identical at this scale, cheaper per frame.
+              resolutionScale renders the postprocessing chain (DOF's blur
+              passes included) at 75% resolution then upscales — DOF is
+              already a soft/blurred effect, so the extra downsampling isn't
+              visible, and it cuts the most expensive part of the frame.
+              bokehScale bumped 4 -> 5.5 (composition-only change, same
+              cost) so the muted backdrop/foreground accents read as soft
+              atmosphere rather than merely-paler shapes. */}
+          <EffectComposer multisampling={4} resolutionScale={0.75}>
+            <DepthOfField target={[0, 0, 0]} focusRange={1.4} bokehScale={5.5} />
+          </EffectComposer>
+          {/* dev-only fps counter — never ships in the production/embedded build */}
+          {import.meta.env.DEV && <Stats />}
+        </Canvas>
       </div>
+      {/* Sits over the Canvas until the letters are ready, then crossfades
+          out — see ReadySignal/PreloadOverlay for why this is tied to
+          Suspense resolving rather than a timeout. */}
+      <PreloadOverlay visible={!ready} reduceMotion={reduceMotion} />
       {/* useControls elsewhere auto-mounts a global Leva panel unless one is
           rendered explicitly — this is that explicit mount, so `hidden` can
           hide it for the production/embedded build. transmission etc. still
