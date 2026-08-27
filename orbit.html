@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Orbit 时环 · 刘予墨 / LY</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,600;125,700;125,800&family=Inter:wght@400;500&family=Space+Mono:wght@400&family=Noto+Sans+SC:wght@400;700;900&display=swap"
+    rel="stylesheet"
+  />
+
+  <link rel="stylesheet" href="css/tokens.css" />
+  <link rel="stylesheet" href="css/base.css" />
+  <link rel="stylesheet" href="css/detail.css" />
+</head>
+<body class="detail-page">
+  <header class="site-nav">
+    <a href="index.html" class="site-nav-brand">刘予墨 <span class="site-nav-brand-en">/ LY</span></a>
+    <nav class="site-nav-links" aria-label="Primary">
+      <a href="index.html#work">Work</a>
+      <a href="index.html#about">About</a>
+    </nav>
+  </header>
+
+  <main class="detail">
+    <a class="detail-back text-meta" href="index.html#work">← 返回作品/首页</a>
+
+    <!--
+      Structure: docs/ia-detail.md §一 (left-text/right-media +
+      scroll-linked accordion, BOC.Studio-style). .detail-left spans
+      every grid row and is position:sticky (see css/detail.css); the
+      five .detail-media-group blocks in .detail-right are plain
+      document flow, auto-placed into column 2 by DOM order alone.
+      js/detail-accordion.js keeps the two in sync — see its own file
+      header for exactly how. Content below is placeholder throughout
+      (structure/interaction first, per this round's brief) — swap the
+      accordion panel text and the numbered .detail-media-frame blocks
+      for real copy/assets later, nothing else needs to change.
+    -->
+    <div class="detail-grid">
+      <aside class="detail-left" aria-label="项目信息与目录">
+        <div>
+          <h1 class="detail-title text-display-l">01 · Orbit 时环</h1>
+          <p class="detail-subtitle text-zh-body">把一次旅程压缩成一枚可交互的"时环"，而非又一个相册。</p>
+        </div>
+        <p class="detail-meta text-meta">App + 硬件系统 · UX / 交互 · 系统设计 · Solo · 2025</p>
+
+        <div class="detail-accordion">
+          <div class="detail-accordion-item">
+            <h2 class="detail-accordion-heading">
+              <button type="button" class="detail-accordion-trigger" aria-expanded="true" aria-controls="panel-1" id="trigger-1">
+                <span class="detail-accordion-num">01</span>
+                <span class="detail-accordion-label">用户背景</span>
+                <span class="detail-accordion-icon" aria-hidden="true"></span>
+              </button>
+            </h2>
+            <div class="detail-accordion-panel is-open" id="panel-1" role="region" aria-labelledby="trigger-1" aria-hidden="false">
+              <div class="detail-accordion-panel-inner">
+                <p class="text-zh-body">占位文字——一个真实的缺口/痛点，用户或场景说话：为什么这件事值得做。（稍后替换为正式内容）</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="detail-accordion-item">
+            <h2 class="detail-accordion-heading">
+              <button type="button" class="detail-accordion-trigger" aria-expanded="false" aria-controls="panel-2" id="trigger-2">
+                <span class="detail-accordion-num">02</span>
+                <span class="detail-accordion-label">关键决策与取舍</span>
+                <span class="detail-accordion-icon" aria-hidden="true"></span>
+              </button>
+            </h2>
+            <div class="detail-accordion-panel" id="panel-2" role="region" aria-labelledby="trigger-2" aria-hidden="true">
+              <div class="detail-accordion-panel-inner">
+                <p class="text-zh-body">占位文字——本页最重要的一段：为什么这么做、放弃了什么、在什么之间权衡。（稍后替换为正式内容）</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="detail-accordion-item">
+            <h2 class="detail-accordion-heading">
+              <button type="button" class="detail-accordion-trigger" aria-expanded="false" aria-controls="panel-3" id="trigger-3">
+                <span class="detail-accordion-num">03</span>
+                <span class="detail-accordion-label">过程</span>
+                <span class="detail-accordion-icon" aria-hidden="true"></span>
+              </button>
+            </h2>
+            <div class="detail-accordion-panel" id="panel-3" role="region" aria-labelledby="trigger-3" aria-hidden="true">
+              <div class="detail-accordion-panel-inner">
+                <p class="text-zh-body">占位文字——怎么一步步做出来的：方法、技术、迭代。（稍后替换为正式内容）</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="detail-accordion-item">
+            <h2 class="detail-accordion-heading">
+              <button type="button" class="detail-accordion-trigger" aria-expanded="false" aria-controls="panel-4" id="trigger-4">
+                <span class="detail-accordion-num">04</span>
+                <span class="detail-accordion-label">最终呈现</span>
+                <span class="detail-accordion-icon" aria-hidden="true"></span>
+              </button>
+            </h2>
+            <div class="detail-accordion-panel" id="panel-4" role="region" aria-labelledby="trigger-4" aria-hidden="true">
+              <div class="detail-accordion-panel-inner">
+                <p class="text-zh-body">占位文字——做出了什么：最终形态与效果。（稍后替换为正式内容）</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="detail-accordion-item">
+            <h2 class="detail-accordion-heading">
+              <button type="button" class="detail-accordion-trigger" aria-expanded="false" aria-controls="panel-5" id="trigger-5">
+                <span class="detail-accordion-num">05</span>
+                <span class="detail-accordion-label">反思</span>
+                <span class="detail-accordion-icon" aria-hidden="true"></span>
+              </button>
+            </h2>
+            <div class="detail-accordion-panel" id="panel-5" role="region" aria-labelledby="trigger-5" aria-hidden="true">
+              <div class="detail-accordion-panel-inner">
+                <p class="text-zh-body">占位文字——结果如何、如果重来会改什么。（稍后替换为正式内容）</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <nav class="detail-project-nav" aria-label="项目导航">
+          <a class="detail-project-nav-link detail-project-nav-prev" href="serava.html">
+            <span class="text-meta">← 上一个项目</span>
+            <span class="detail-project-nav-name text-zh-body">Serava 喵梦</span>
+          </a>
+          <a class="detail-project-nav-link detail-project-nav-next" href="echocourt.html">
+            <span class="text-meta">下一个项目 →</span>
+            <span class="detail-project-nav-name text-zh-body">EchoCourt 回声球场</span>
+          </a>
+        </nav>
+      </aside>
+
+      <div class="detail-right">
+        <section class="detail-media-group" aria-label="用户背景 配图">
+          <p class="detail-media-group-label text-meta">01 · 用户背景</p>
+          <div class="detail-media-frame"><div class="detail-media-placeholder"><span class="detail-media-index">1</span></div></div>
+          <div class="detail-media-frame"><div class="detail-media-placeholder"><span class="detail-media-index">2</span></div></div>
+        </section>
+        <section class="detail-media-group" aria-label="关键决策与取舍 配图">
+          <p class="detail-media-group-label text-meta">02 · 关键决策与取舍</p>
+          <div class="detail-media-frame"><div class="detail-media-placeholder"><span class="detail-media-index">3</span></div></div>
+          <div class="detail-media-frame"><div class="detail-media-placeholder"><span class="detail-media-index">4</span></div></div>
+        </section>
+        <section class="detail-media-group" aria-label="过程 配图">
+          <p class="detail-media-group-label text-meta">03 · 过程</p>
+          <div class="detail-media-frame"><div class="detail-media-placeholder"><span class="detail-media-index">5</span></div></div>
+          <div class="detail-media-frame"><div class="detail-media-placeholder"><span class="detail-media-index">6</span></div></div>
+        </section>
+        <section class="detail-media-group" aria-label="最终呈现 配图">
+          <p class="detail-media-group-label text-meta">04 · 最终呈现</p>
+          <div class="detail-media-frame"><div class="detail-media-placeholder"><span class="detail-media-index">7</span></div></div>
+          <div class="detail-media-frame"><div class="detail-media-placeholder"><span class="detail-media-index">8</span></div></div>
+        </section>
+        <section class="detail-media-group" aria-label="反思 配图">
+          <p class="detail-media-group-label text-meta">05 · 反思</p>
+          <div class="detail-media-frame"><div class="detail-media-placeholder"><span class="detail-media-index">9</span></div></div>
+          <div class="detail-media-frame"><div class="detail-media-placeholder"><span class="detail-media-index">10</span></div></div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/site-nav.js" defer></script>
+  <script src="js/detail-accordion.js" defer></script>
+</body>
+</html>

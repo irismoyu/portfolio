@@ -50,7 +50,16 @@
     [cloneFirst, cloneLast].forEach(function (clone) {
       clone.setAttribute('data-clone', '');
       clone.setAttribute('aria-hidden', 'true');
-      clone.setAttribute('inert', '');
+      // NOT `inert` — a clone is a pixel-identical copy of a real slide
+      // with the exact same href, so letting a click on it navigate
+      // (or letting drag/scroll happen mid-transition) is harmless. Full
+      // `inert` was blocking clicks on it silently — a mouse user
+      // clicking a peek image that happened to be a clone would just
+      // get no response at all, indistinguishable from a broken link.
+      // tabindex="-1" alone is enough to keep it out of the tab order,
+      // and aria-hidden above already keeps screen readers off it.
+      var link = clone.querySelector('.work-media-link');
+      if (link) link.setAttribute('tabindex', '-1');
     });
     track.insertBefore(cloneLast, originalSlides[0]);
     track.appendChild(cloneFirst);
@@ -184,14 +193,48 @@
       dragDeltaX = 0;
       baseOffset = offsetForIndex(index);
       clearTimeout(snapTimer);
-      track.classList.add('is-dragging');
-      track.setPointerCapture(pointerId);
+      // NOT track.setPointerCapture() here — that's deferred to
+      // pointermove, once a real drag is actually confirmed (see
+      // below). Capturing unconditionally on every pointerdown, drag or
+      // not, was the actual bug behind clicks not navigating at all:
+      // once a pointer is captured, Chrome retargets that pointer's
+      // subsequent events — pointerup AND the click event it
+      // synthesizes — to the CAPTURING element (track) instead of
+      // whatever's actually under the cursor. Since the slide's <a> is
+      // a descendant of track, not an ancestor, a click retargeted to
+      // track never passes through the <a> at all, so there's nothing
+      // for the browser to navigate — this reproduced on every real
+      // click, not just ones with movement, which a scripted click
+      // (dispatched without going through real pointerdown/up) never
+      // triggers, so it was easy to miss while testing.
     });
+
+    // MOVE_THRESHOLD_PX gates two different things off the same number,
+    // and both need real slack: a genuine mouse/trackpad click almost
+    // never lands at the exact same pixel on down and up (unlike a
+    // scripted/automated click, which does) — a couple of px of
+    // incidental jitter is normal, not a drag attempt. 4px was tight
+    // enough that ordinary click jitter routinely crossed it, which set
+    // `moved = true` and made the click handler below call
+    // preventDefault() on what the user experienced as a plain click on
+    // a slide — silently swallowing navigation to the detail page with
+    // no visible error.
+    var MOVE_THRESHOLD_PX = 10;
 
     track.addEventListener('pointermove', function (e) {
       if (!dragging) return;
       dragDeltaX = e.clientX - dragStartX;
-      if (Math.abs(dragDeltaX) > 4) moved = true;
+      if (!moved && Math.abs(dragDeltaX) > MOVE_THRESHOLD_PX) {
+        moved = true;
+        // Captured here — the instant a real drag is confirmed — not on
+        // every pointerdown (see that handler's comment for why: doing
+        // it unconditionally broke click-to-navigate for every real
+        // click). A genuine drag past this point does benefit from
+        // capture, so the gesture keeps tracking even if the pointer
+        // strays outside track's bounds.
+        track.classList.add('is-dragging');
+        track.setPointerCapture(pointerId);
+      }
       var px = baseOffset + dragDeltaX;
       applyTrackTransform(px, false);
       updateVisualState(px);

@@ -1,0 +1,416 @@
+/*
+  Project detail page — left-text/right-media + scroll-linked accordion
+  (see docs/ia-detail.md §一, "格式参考 BOC.Studio"). Built on tokens.css +
+  base.css only, same as home.css — NOT home.css itself: home.css's own
+  header comment says "Not shared with other pages... do not import
+  elsewhere", so the handful of nav rules this page also needs
+  (.site-nav / .site-nav-brand / .site-nav-links) are intentionally
+  duplicated below rather than imported, matching that convention.
+
+  Whole page is one continuous document-flow scroll (no nested scroll
+  container for the right column) — .detail-left is just position:sticky
+  inside that flow. That's what lets js/detail-accordion.js drive the
+  left accordion off which .detail-media-group the PAGE has scrolled to,
+  with no separate scroll-position bookkeeping for two panes.
+*/
+
+html {
+  scroll-behavior: smooth;
+}
+
+body.detail-page {
+  background: var(--deep);
+  color: var(--on-deep);
+}
+
+/* ---------------------------------------------------------------- */
+/* Nav — duplicated from home.css's .site-nav (see file header).     */
+/* Detail pages have no hero for it to sit transparently over, but    */
+/* starting transparent and picking up the translucent-chip treatment */
+/* on scroll (site-nav.js, shared/unmodified) still reads fine over    */
+/* .detail's own --deep background, and keeps the chrome identical    */
+/* to the homepage's.                                                 */
+/* ---------------------------------------------------------------- */
+
+.site-nav {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-4) var(--space-6);
+  background: transparent;
+  transition: background-color var(--duration-base) var(--ease-standard);
+}
+
+.site-nav.is-scrolled {
+  background: rgba(8, 17, 96, 0.55);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.site-nav-brand {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--space-1);
+  font-family: var(--font-display);
+  font-stretch: var(--font-stretch-display);
+  font-weight: var(--fw-h2);
+  font-size: var(--fs-body);
+  color: var(--on-deep);
+  text-decoration: none;
+}
+
+.site-nav-brand-en {
+  font-family: var(--font-body);
+  font-weight: var(--fw-body);
+  color: var(--on-deep-2);
+}
+
+.site-nav-links {
+  display: flex;
+  gap: var(--space-5);
+}
+
+.site-nav-links a {
+  font-family: var(--font-mono);
+  font-size: var(--fs-meta);
+  letter-spacing: var(--tracking-meta);
+  text-transform: uppercase;
+  color: var(--on-deep-2);
+  text-decoration: none;
+  transition: color var(--duration-fast) var(--ease-standard);
+}
+
+.site-nav-links a:hover,
+.site-nav-links a:focus-visible {
+  color: var(--hi-on-deep);
+}
+
+@media (max-width: 480px) {
+  .site-nav {
+    padding: var(--space-3) var(--space-4);
+  }
+}
+
+/* ---------------------------------------------------------------- */
+/* Page shell                                                        */
+/* ---------------------------------------------------------------- */
+
+.detail {
+  /* Clears the fixed nav — nav's own height varies with font metrics,
+     so this just gives generous fixed headroom rather than measuring
+     it (same approach as .hero/.about don't need this: they sit under
+     the nav on purpose; .detail has no hero to hide behind). */
+  padding: var(--space-8) var(--space-6) var(--space-8);
+  max-width: 1800px;
+  margin: 0 auto;
+}
+
+.detail-back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  margin-bottom: var(--space-6);
+  color: var(--on-deep-2);
+  text-decoration: none;
+  transition: color var(--duration-fast) var(--ease-standard);
+}
+
+.detail-back:hover,
+.detail-back:focus-visible {
+  color: var(--hi-on-deep);
+}
+
+/* ---------------------------------------------------------------- */
+/* Two-column grid: .detail-left spans every row (grid-row: 1 / -1)  */
+/* and is position:sticky within that span, so it stays pinned while  */
+/* .detail-right's groups (auto-placed into column 2, one per row by  */
+/* plain DOM order — no explicit grid-row needed on them) scroll      */
+/* past underneath the page's normal scroll. See the file header for  */
+/* why this is one shared scroll rather than two independent panes.   */
+/* ---------------------------------------------------------------- */
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: minmax(320px, 38%) 1fr;
+  column-gap: var(--space-7);
+}
+
+.detail-left {
+  grid-column: 1;
+  grid-row: 1 / -1;
+  align-self: start;
+  position: sticky;
+  /* Clears the fixed nav with room to spare. */
+  top: var(--space-8);
+  max-height: calc(100vh - var(--space-8) * 2);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  /* Sticky content scrolling internally on short viewports shouldn't
+     show a hard-edged clip at the panel text — a small fade would be
+     nicer, but isn't worth the complexity for a placeholder-content
+     scaffold; overflow-y:auto alone keeps it usable. */
+}
+
+.detail-title {
+  margin: 0;
+}
+
+.detail-subtitle {
+  margin: 0;
+  color: var(--on-deep-2);
+}
+
+.detail-meta {
+  color: var(--hi-on-deep);
+}
+
+/* ---------------------------------------------------------------- */
+/* Accordion — one section open at a time, driven by                 */
+/* js/detail-accordion.js (click OR scroll position, see that file).  */
+/* The 0fr/1fr grid-template-rows trick animates height without JS    */
+/* ever measuring scrollHeight; base.css's global                    */
+/* prefers-reduced-motion rule (transition-duration: 0.001ms) already */
+/* neutralizes this transition for anyone who's asked for less        */
+/* motion, so nothing extra is needed here for that.                  */
+/* ---------------------------------------------------------------- */
+
+.detail-accordion {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid rgba(238, 240, 248, 0.16);
+}
+
+.detail-accordion-item {
+  border-bottom: 1px solid rgba(238, 240, 248, 0.16);
+}
+
+.detail-accordion-heading {
+  margin: 0;
+}
+
+.detail-accordion-trigger {
+  width: 100%;
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  padding: var(--space-3) 0;
+  background: none;
+  border: none;
+  color: var(--on-deep);
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.detail-accordion-num {
+  font-family: var(--font-mono);
+  font-size: var(--fs-meta);
+  color: var(--on-deep-2);
+  flex-shrink: 0;
+}
+
+.detail-accordion-label {
+  font-family: var(--font-zh);
+  font-weight: var(--fw-zh-heading);
+  font-size: var(--fs-body);
+  flex: 1;
+  transition: color var(--duration-fast) var(--ease-standard);
+}
+
+.detail-accordion-trigger[aria-expanded="true"] .detail-accordion-label {
+  color: var(--hi-on-deep);
+}
+
+.detail-accordion-trigger:hover .detail-accordion-label,
+.detail-accordion-trigger:focus-visible .detail-accordion-label {
+  color: var(--hi-on-deep);
+}
+
+.detail-accordion-icon {
+  font-family: var(--font-mono);
+  color: var(--on-deep-2);
+  flex-shrink: 0;
+  width: 1em;
+  text-align: center;
+}
+
+/* "▾" open / "+" closed — see docs/ia-detail.md's own ascii diagram. */
+.detail-accordion-icon::before {
+  content: "+";
+}
+
+.detail-accordion-trigger[aria-expanded="true"] .detail-accordion-icon::before {
+  content: "▾";
+}
+
+.detail-accordion-panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--duration-slow) var(--ease-standard);
+}
+
+.detail-accordion-panel.is-open {
+  grid-template-rows: 1fr;
+}
+
+.detail-accordion-panel-inner {
+  overflow: hidden;
+  min-height: 0;
+}
+
+.detail-accordion-panel-inner p {
+  margin: 0 0 var(--space-4);
+  color: var(--on-deep-2);
+  line-height: var(--lh-body);
+}
+
+.detail-accordion-panel-inner p:last-child {
+  margin-bottom: var(--space-4);
+}
+
+/* ---------------------------------------------------------------- */
+/* Prev/next project — bottom of the left column, per the ia-detail.md */
+/* ascii diagram (sits under the accordion, not floated separately).   */
+/* ---------------------------------------------------------------- */
+
+.detail-project-nav {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding-top: var(--space-2);
+}
+
+.detail-project-nav-link {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  text-decoration: none;
+  color: var(--on-deep);
+  transition: color var(--duration-fast) var(--ease-standard);
+}
+
+.detail-project-nav-next {
+  text-align: right;
+  align-items: flex-end;
+}
+
+.detail-project-nav-link:hover,
+.detail-project-nav-link:focus-visible {
+  color: var(--hi-on-deep);
+}
+
+.detail-project-nav-link .text-meta {
+  color: var(--on-deep-2);
+}
+
+.detail-project-nav-name {
+  font-family: var(--font-zh);
+  font-weight: var(--fw-zh-heading);
+}
+
+/* ---------------------------------------------------------------- */
+/* Right column — plain vertical flow, one .detail-media-group per   */
+/* accordion section. js/detail-accordion.js's IntersectionObserver   */
+/* watches these directly (not the individual frames inside).         */
+/* ---------------------------------------------------------------- */
+
+.detail-right {
+  grid-column: 2;
+  display: flex;
+  flex-direction: column;
+  /* Generous gap between sections — the IntersectionObserver's         */
+  /* rootMargin band (see the JS) needs real empty space between        */
+  /* groups so only one is ever centered in it at a time. */
+  gap: var(--space-8);
+  /* First/last group get extra breathing room so they can each still  */
+  /* pass fully through the viewport's vertical-center activation band  */
+  /* (see the JS), not just brush past its edge. */
+  padding-top: 20vh;
+  padding-bottom: 60vh;
+}
+
+.detail-media-group-label {
+  margin: 0 0 var(--space-3);
+  color: var(--on-deep-2);
+}
+
+.detail-media-frame {
+  position: relative;
+  width: 100%;
+  height: 0;
+  padding-top: 60%;
+  background: var(--deep-2);
+  border: 1px solid rgba(238, 240, 248, 0.3);
+  border-radius: var(--radius-card);
+  margin-bottom: var(--space-4);
+}
+
+.detail-media-frame:last-child {
+  margin-bottom: 0;
+}
+
+.detail-media-placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.detail-media-index {
+  font-family: var(--font-mono);
+  font-size: var(--fs-display-l);
+  color: var(--on-deep-2);
+  opacity: 0.6;
+}
+
+/* ---------------------------------------------------------------- */
+/* Mobile: can't split into two columns, so this drops the grid       */
+/* entirely and stacks .detail-left then .detail-right in source      */
+/* order (media visually first via `order`, text still first in the   */
+/* DOM/tab order) — see docs/ia-detail.md §五 "移动端退化". The         */
+/* accordion (js/detail-accordion.js) and the scroll-linking both      */
+/* keep working unchanged: they only care about element references,   */
+/* not the grid layout around them.                                   */
+/* ---------------------------------------------------------------- */
+
+@media (max-width: 860px) {
+  .detail-grid {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .detail-left {
+    position: static;
+    max-height: none;
+    overflow-y: visible;
+    order: 2;
+  }
+
+  .detail-right {
+    order: 1;
+    padding-top: 0;
+    padding-bottom: var(--space-6);
+    gap: var(--space-6);
+  }
+}
+
+@media (max-width: 480px) {
+  .detail {
+    padding: var(--space-6) var(--space-4) var(--space-8);
+  }
+
+  .detail-project-nav {
+    flex-direction: column;
+  }
+
+  .detail-project-nav-next {
+    text-align: left;
+    align-items: flex-start;
+  }
+}

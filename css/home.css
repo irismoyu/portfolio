@@ -551,11 +551,13 @@ body.custom-cursor-active #hero * {
 
 /* Clones of the first/last real slide (see js/work-carousel.js) exist
    purely so the peek either side of the boundary slides shows real
-   content instead of empty viewport background — they're never a
-   legitimate navigation target, so keep them out of tab order/AT. */
-.work-carousel-slide[data-clone] {
-  pointer-events: none;
-}
+   content instead of empty viewport background. They stay fully
+   clickable — deliberately NOT pointer-events:none — because a click
+   on one is a click on a pixel-identical copy of a real slide with the
+   same href, so it should just work like any other slide; see
+   work-carousel.js's own comment for why they're kept out of the tab
+   order (tabindex="-1") without going as far as disabling clicks too.
+*/
 
 .work-media-link {
   display: block;
