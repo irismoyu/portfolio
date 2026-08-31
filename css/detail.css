@@ -145,8 +145,10 @@ body.detail-page {
   position: sticky;
   /* Clears the fixed nav with room to spare. */
   top: var(--space-8);
-  max-height: calc(100vh - var(--space-8) * 2);
-  overflow-y: auto;
+  /* Let long bilingual case copy extend with the page instead of creating
+     a second, browser-default scrollbar inside the sticky column. */
+  max-height: none;
+  overflow: visible;
   display: flex;
   flex-direction: column;
   gap: var(--space-5);
@@ -352,6 +354,16 @@ body.detail-page {
 
 .detail-media-frame:last-child {
   margin-bottom: 0;
+}
+
+.detail-media-frame > img,
+.detail-media-frame > video {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
 .detail-media-placeholder {
