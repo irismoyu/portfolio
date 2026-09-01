@@ -59,7 +59,8 @@
             </h2>
             <div class="detail-accordion-panel is-open" id="panel-1" role="region" aria-labelledby="trigger-1" aria-hidden="false">
               <div class="detail-accordion-panel-inner">
-                <p class="text-zh-body">占位文字——一个真实的缺口/痛点，用户或场景说话：为什么这件事值得做。（稍后替换为正式内容）</p>
+                <p class="text-zh-body">网球进阶者最大的痛点，是“动作错了却说不清错在哪”。用户访谈里反复出现这样的话——“刚学会很上瘾，连打两周，动作不规范喜提网球肘”“我感觉自己拉得不对，但说不清差在哪”“以为拉拍到位了，打完看视频天塌了”。和水平相近的人对打时，人无暇顾及动作，“能打回去就是胜利”。他们需要的不是又一次练习，而是让看不见的动作偏差被看见、被即时纠正——一套完整的改进流程，而非零散提醒。</p>
+                <p class="text-body" lang="en" style="font-size: 0.875em;">For intermediate players, the core pain is “something's wrong but I can't tell what.” Interviews surfaced it again and again — tennis elbow from bad form, a swing that “feels off” but can't be named. They don't need more reps; they need invisible motion errors made visible and corrected in the moment.</p>
               </div>
             </div>
           </div>
@@ -74,7 +75,8 @@
             </h2>
             <div class="detail-accordion-panel" id="panel-2" role="region" aria-labelledby="trigger-2" aria-hidden="true">
               <div class="detail-accordion-panel-inner">
-                <p class="text-zh-body">占位文字——本页最重要的一段：为什么这么做、放弃了什么、在什么之间权衡。（稍后替换为正式内容）</p>
+                <p class="text-zh-body">面对“初学者要激励、职业选手要数据、进阶者要低干扰智能”三类人群，我选择聚焦进阶者，并定下核心理念——技术隐形：在保留真实击球手感的前提下，把智能藏进装置里。关键取舍在硬件形态上：最初想做一把全新的智能球拍，但会让使用方式和场景过于局限；于是转向模块化组件——传感器隐形嵌入拍底盖、摄像头挂上球场围网，把“固定视觉捕捉”与“具身动作传感”分离，既减轻数据压力、又保持了产品的轻便与不改变击球习惯。</p>
+                <p class="text-body" lang="en" style="font-size: 0.875em;">Facing three user types, I focused on the intermediate player and set one principle — invisible technology: keep the real feel of the swing, hide the intelligence inside. The key trade-off was hardware form: instead of a whole new racket (too limiting), I split it into modular parts — a sensor in the racket's end-cap and a camera clipped to the fence — separating visual capture from embodied sensing to keep it light and habit-preserving.</p>
               </div>
             </div>
           </div>
@@ -89,7 +91,8 @@
             </h2>
             <div class="detail-accordion-panel" id="panel-3" role="region" aria-labelledby="trigger-3" aria-hidden="true">
               <div class="detail-accordion-panel-inner">
-                <p class="text-zh-body">占位文字——怎么一步步做出来的：方法、技术、迭代。（稍后替换为正式内容）</p>
+                <p class="text-zh-body">设计理念源自一个洞察：人的动作不是孤立的点，而是连续的、有节奏与方向的流动。我从舞蹈理论家 Rudolph Laban 的动作符号系统、以及运动摄影先驱 Gjon Mili 的轨迹影像中获得启发——身体语言能否转化为视觉、听觉、触觉，反过来辅助学习？据此搭建技术链路：动作捕捉（YOLOv8-Pose / MediaPipe 提取人体关键点）→ 轨迹生成（Python 处理时序数据）→ 正确轨迹比对（DTW 计算与标准动作的偏差，量化肘、肩、腕的关节角度）→ 多模态反馈（视觉粒子、听觉音效、触觉震动）。硬件层用 ESP32 + MPU6050 六轴传感器实测挥拍力度，超过阈值即触发差异化震动。</p>
+                <p class="text-body" lang="en" style="font-size: 0.875em;">The concept came from one insight: movement isn't isolated points but continuous, rhythmic flow. Drawing on Rudolph Laban's movement notation and Gjon Mili's motion photography, I built a pipeline: capture (YOLOv8-Pose/MediaPipe) → trajectory (Python) → comparison (DTW, quantifying joint angles) → multimodal feedback (particles, sound, haptics), with an ESP32 + MPU6050 measuring real swing force.</p>
               </div>
             </div>
           </div>
@@ -104,7 +107,8 @@
             </h2>
             <div class="detail-accordion-panel" id="panel-4" role="region" aria-labelledby="trigger-4" aria-hidden="true">
               <div class="detail-accordion-panel-inner">
-                <p class="text-zh-body">占位文字——做出了什么：最终形态与效果。（稍后替换为正式内容）</p>
+                <p class="text-zh-body">成品是一套“技术隐形”的具身智能网球系统：隐形嵌入（传感器藏进拍底盖，轻触即激活）+ 挂网即用（摄像头挂上围网、无需支架、广角覆盖全场）+ 无感体验（设备自动连接，不改变击球习惯）。反馈上，系统只在关键错误或极佳表现时介入——错误时“嗡-嗡”短促双震 + 语音“再快点”，完美时“嗡——”长震 + “完美！”，避免过度打扰。对进阶练习者，App 端的粒子更多承载社交与反思价值：练习后生成粒子精彩时刻，并根据数据生成专属“粒子人格”，把“收肘”“早转髋”等改进词写进粒子爆炸里。</p>
+                <p class="text-body" lang="en" style="font-size: 0.875em;">The result: an embodied system where tech disappears — sensor hidden in the end-cap, camera clipped to the fence, auto-connected, habit-preserving. Haptics intervene only at key errors or peak form. For advanced players the particles carry social and reflective value: a highlight reel and a data-driven “particle persona” with fixes written into the particle bursts.</p>
               </div>
             </div>
           </div>
@@ -119,7 +123,8 @@
             </h2>
             <div class="detail-accordion-panel" id="panel-5" role="region" aria-labelledby="trigger-5" aria-hidden="true">
               <div class="detail-accordion-panel-inner">
-                <p class="text-zh-body">占位文字——结果如何、如果重来会改什么。（稍后替换为正式内容）</p>
+                <p class="text-zh-body">这是我第一次尽可能完整地走完一遍产品设计流程——过去的课多聚焦调研或建模，这次在八周里从一个想法出发，串起调研、分析、定义、制作，还补上了“制作”方面的经验。过程中方案几经改变：用 TouchDesigner + Kinect 做的实时粒子最终没能成为产品主体，是一处遗憾。成品也还没到完全体。但这次让我第一次理解了技术哲学的基本观点，也真正体会到“从想法到初步产品”意味着什么——怀着爱和勇气去做设计。</p>
+                <p class="text-body" lang="en" style="font-size: 0.875em;">This was my first time running a full product-design process end to end — research, analysis, definition, making — in eight weeks. The direction shifted a few times; the TouchDesigner + Kinect real-time particles didn't make it into the final product, a real regret. It's not finished, but it taught me what it means to carry an idea to a working product.</p>
               </div>
             </div>
           </div>
@@ -140,29 +145,51 @@
       <div class="detail-right">
         <section class="detail-media-group" aria-label="用户背景 配图">
           <p class="detail-media-group-label text-meta">01 · 用户背景</p>
-          <div class="detail-media-frame"><div class="detail-media-placeholder"><span class="detail-media-index">1</span></div></div>
-          <div class="detail-media-frame"><div class="detail-media-placeholder"><span class="detail-media-index">2</span></div></div>
+          <div class="detail-media-frame">
+            <img src="assets/echocourt/用户背景-1.png" alt="EchoCourt 用户背景" loading="lazy" decoding="async" />
+          </div>
         </section>
         <section class="detail-media-group" aria-label="关键决策与取舍 配图">
           <p class="detail-media-group-label text-meta">02 · 关键决策与取舍</p>
-          <div class="detail-media-frame"><div class="detail-media-placeholder"><span class="detail-media-index">3</span></div></div>
-          <div class="detail-media-frame"><div class="detail-media-placeholder"><span class="detail-media-index">4</span></div></div>
+          <div class="detail-media-frame">
+            <img src="assets/echocourt/关键决策-1.png" alt="EchoCourt 关键决策与取舍一" loading="lazy" decoding="async" />
+          </div>
+          <div class="detail-media-frame">
+            <img src="assets/echocourt/关键决策-2.png" alt="EchoCourt 关键决策与取舍二" loading="lazy" decoding="async" />
+          </div>
         </section>
         <section class="detail-media-group" aria-label="过程 配图">
           <p class="detail-media-group-label text-meta">03 · 过程</p>
-          <div class="detail-media-frame"><div class="detail-media-placeholder"><span class="detail-media-index">5</span></div></div>
-          <div class="detail-media-frame"><div class="detail-media-placeholder"><span class="detail-media-index">6</span></div></div>
+          <div class="detail-media-frame">
+            <img src="assets/echocourt/过程-1.png" alt="EchoCourt 设计过程一" loading="lazy" decoding="async" />
+          </div>
+          <div class="detail-media-frame">
+            <img src="assets/echocourt/过程-2.png" alt="EchoCourt 设计过程二" loading="lazy" decoding="async" />
+          </div>
+          <div class="detail-media-frame">
+            <img src="assets/echocourt/过程-3.png" alt="EchoCourt 设计过程三" loading="lazy" decoding="async" />
+          </div>
         </section>
         <section class="detail-media-group" aria-label="最终呈现 配图">
           <p class="detail-media-group-label text-meta">04 · 最终呈现</p>
-          <div class="detail-media-frame"><div class="detail-media-placeholder"><span class="detail-media-index">7</span></div></div>
-          <div class="detail-media-frame"><div class="detail-media-placeholder"><span class="detail-media-index">8</span></div></div>
+          <div class="detail-media-frame">
+            <img src="assets/echocourt/最终呈现-1.png" alt="EchoCourt 最终呈现一" loading="lazy" decoding="async" />
+          </div>
+          <div class="detail-media-frame">
+            <video autoplay loop muted playsinline preload="metadata" aria-label="EchoCourt 最终呈现二">
+              <source src="assets/echocourt/最终呈现-2.mp4" type="video/mp4" />
+            </video>
+          </div>
+          <div class="detail-media-frame">
+            <video autoplay loop muted playsinline preload="metadata" aria-label="EchoCourt 最终呈现三">
+              <source src="assets/echocourt/最终呈现-3.mp4" type="video/mp4" />
+            </video>
+          </div>
+          <div class="detail-media-frame">
+            <img src="assets/echocourt/最终呈现-4.png" alt="EchoCourt 最终呈现四" loading="lazy" decoding="async" />
+          </div>
         </section>
-        <section class="detail-media-group" aria-label="反思 配图">
-          <p class="detail-media-group-label text-meta">05 · 反思</p>
-          <div class="detail-media-frame"><div class="detail-media-placeholder"><span class="detail-media-index">9</span></div></div>
-          <div class="detail-media-frame"><div class="detail-media-placeholder"><span class="detail-media-index">10</span></div></div>
-        </section>
+        <section class="detail-media-group" aria-label="反思（无媒体）" style="min-height: 20vh;"></section>
       </div>
     </div>
   </main>
