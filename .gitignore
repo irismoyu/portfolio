@@ -1,5 +1,6 @@
 ﻿node_modules/
 .vercel/
+.claude/
 .DS_Store
 
 # Raw/uncut source footage and reference PDFs kept locally for editing —
