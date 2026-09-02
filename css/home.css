@@ -560,9 +560,44 @@ body.custom-cursor-active #hero * {
 */
 
 .work-media-link {
+  position: relative;
   display: block;
   border-radius: var(--radius-card);
   overflow: hidden;
+  cursor: pointer;
+}
+
+/* A quiet but explicit affordance on the actual link: it appears only
+   when a fine pointer explores a project image, so the carousel remains
+   editorially spare at rest. */
+.work-media-link::after {
+  content: "查看项目 / View Project  →";
+  position: absolute;
+  right: var(--space-3);
+  bottom: var(--space-3);
+  z-index: 1;
+  padding: 0.55rem 0.75rem;
+  border: 1px solid rgba(111, 154, 255, 0.62);
+  border-radius: 999px;
+  background: rgba(8, 17, 96, 0.72);
+  color: #b9ccff;
+  font-family: var(--font-body);
+  font-size: var(--fs-meta);
+  font-weight: var(--fw-body-strong);
+  letter-spacing: 0.02em;
+  line-height: 1;
+  opacity: 0;
+  transform: translateY(6px);
+  transition:
+    opacity 220ms var(--ease-standard),
+    transform 220ms var(--ease-standard);
+  pointer-events: none;
+}
+
+.work-media-link:hover::after,
+.work-media-link:focus-visible::after {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .work-media-frame {
@@ -587,6 +622,9 @@ body.custom-cursor-active #hero * {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition:
+    transform 220ms var(--ease-standard),
+    filter 220ms var(--ease-standard);
 }
 
 .work-media-placeholder {
@@ -607,9 +645,11 @@ body.custom-cursor-active #hero * {
 /* Hover/focus feedback lives on the link (the actual click target for
    "跳到项目详情页"), not the nav buttons beside it. */
 .work-media-link:hover .work-media-placeholder,
-.work-media-link:focus-visible .work-media-placeholder {
-  transform: scale(1.02);
-  filter: brightness(1.08);
+.work-media-link:focus-visible .work-media-placeholder,
+.work-media-link:hover .work-media-asset,
+.work-media-link:focus-visible .work-media-asset {
+  transform: translateY(-4px) scale(1.018);
+  filter: brightness(1.06);
 }
 
 .work-media-nav {
@@ -657,8 +697,25 @@ body.custom-cursor-active #hero * {
 
 @media (prefers-reduced-motion: reduce) {
   .work-media-placeholder,
-  .work-carousel-slide {
+  .work-media-asset,
+  .work-carousel-slide,
+  .work-media-link::after {
     transition: none;
+  }
+
+  .work-media-link::after {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Touch users do not get hover, so retain a compact, always-visible cue. */
+@media (hover: none), (pointer: coarse) {
+  .work-media-link::after {
+    content: "查看项目  →";
+    padding: 0.45rem 0.6rem;
+    opacity: 1;
+    transform: none;
   }
 }
 
