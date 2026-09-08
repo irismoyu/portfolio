@@ -37,6 +37,8 @@
   .sticker-person { top: 50%; }
 }
 .person-avatar { display: block; width: 100%; height: auto; object-fit: contain; user-select: none; }
+.person-avatar, .asset-ink img { transition: opacity 180ms ease; }
+.about-images-pending .person-avatar, .about-images-pending .asset-ink img { opacity: 0; }
 .sticker { position: absolute; left: calc(50% + var(--orbit-rx) * cos(var(--orbit-angle))); top: calc(50% + var(--orbit-ry) * sin(var(--orbit-angle))); width: 190px; z-index: 1; transform: translate(-50%, -50%) rotate(var(--angle)); }
 .sticker-toggle { position: relative; width: 100%; min-height: 148px; padding: 22px 16px; border: 0; border-radius: 24px 8px 28px 10px; background: var(--tint); color: var(--deep); font: inherit; cursor: pointer; display: flex; flex-direction: column; align-items: center; box-shadow: inset 0 0 0 5px rgba(255,255,255,.4), 0 10px 24px rgba(0,0,0,.14); transition: transform 260ms ease, box-shadow 260ms ease; overflow: hidden; }
 .sticker[data-shape="oval"] .sticker-toggle { border-radius: 50%; }
@@ -156,7 +158,7 @@
   .stickers-enter .sticker { animation: none; }
   .sticker-toggle, .sticker-toggle::after { transition: none; }
   .sticker:not(.is-open) .sticker-toggle:hover { transform: none; }
-  .sticker, .asset-wrapper, .sticker-title, .sticker-action { transition: none; }
+  .sticker, .asset-wrapper, .sticker-title, .sticker-action, .person-avatar, .asset-ink img { transition: none; }
   .sticker.is-clicked .asset-wrapper, .sticker.is-clicked .asset-ink::after { animation: none; }
   .sticker-toggle-art:hover .asset-wrapper { transform: none; }
 }

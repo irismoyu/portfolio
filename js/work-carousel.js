@@ -277,6 +277,7 @@
       resizeTimer = setTimeout(function () { render(false); }, 100);
     });
 
+    root.addEventListener('work:shown', function () { render(false); });
     render(false);
   }
 

@@ -5,6 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>刘予墨 · Liu Yumo</title>
 
+  <!-- Fetch the complete About composition early; masks reuse these URLs. -->
+  <link rel="preload" as="image" type="image/webp" href="assets/about/avatar.webp" fetchpriority="high" crossorigin="anonymous" />
+  <link rel="preload" as="image" type="image/webp" href="assets/about/Awards.webp" fetchpriority="high" crossorigin="anonymous" />
+  <link rel="preload" as="image" type="image/webp" href="assets/about/Education.webp" fetchpriority="high" crossorigin="anonymous" />
+  <link rel="preload" as="image" type="image/webp" href="assets/about/Experience.webp" fetchpriority="high" crossorigin="anonymous" />
+  <link rel="preload" as="image" type="image/webp" href="assets/about/Offline.webp" fetchpriority="high" crossorigin="anonymous" />
+  <link rel="preload" as="image" type="image/webp" href="assets/about/Rightnow.webp" fetchpriority="high" crossorigin="anonymous" />
+  <link rel="preload" as="image" type="image/webp" href="assets/about/Tmi.webp" fetchpriority="high" crossorigin="anonymous" />
+  <link rel="preload" as="image" type="image/webp" href="assets/about/Toolkit.webp" fetchpriority="high" crossorigin="anonymous" />
+  <link rel="preload" as="image" type="image/webp" href="assets/about/Whydesign.webp" fetchpriority="high" crossorigin="anonymous" />
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
@@ -120,10 +131,10 @@
           </div>
           <div class="sticker-stage">
             <div class="sticker-orbit" aria-hidden="true"></div>
-            <div class="sticker-person"><img class="person-avatar" src="assets/about/avatar.png" alt="刘予墨的个人插画形象" width="1536" height="2048" loading="lazy" decoding="async" draggable="false" /></div>
+            <div class="sticker-person"><img class="person-avatar" src="assets/about/avatar.webp" alt="刘予墨的个人插画形象" width="522" height="696" loading="eager" fetchpriority="high" crossorigin="anonymous" decoding="async" draggable="false" /></div>
             <div class="sticker-list">
               <article class="sticker" style="--orbit-angle:-135deg;--angle:-10deg;--delay:0ms;--tint:#dbe3ff" data-shape="ticket">
-                <button class="sticker-toggle sticker-toggle-art" type="button" aria-expanded="false" aria-controls="sticker-education"><span class="sticker-number">01 / EDUCATION</span><span class="asset-wrapper" style="--ink-width:125.502px;--ink-height:111.703px;--source-width:142.5191%;--source-left:-21.3640%;--source-top:0.0000%;--asset-mask:url('assets/about/Education.png');--mask-x:50.2457%;--mask-y:-0.0000%"><span class="asset-ink"><img src="assets/about/Education.png" alt="" width="2048" height="1536" loading="lazy" decoding="async" draggable="false" /></span></span><span class="sticker-title">教育</span><span class="sticker-action" aria-hidden="true">↗</span></button>
+                <button class="sticker-toggle sticker-toggle-art" type="button" aria-expanded="false" aria-controls="sticker-education"><span class="sticker-number">01 / EDUCATION</span><span class="asset-wrapper" style="--ink-width:125.502px;--ink-height:111.703px;--source-width:142.5191%;--source-left:-21.3640%;--source-top:0.0000%;--asset-mask:url('../assets/about/Education.webp');--mask-x:50.2457%;--mask-y:-0.0000%"><span class="asset-ink"><img src="assets/about/Education.webp" alt="" width="360" height="270" loading="eager" fetchpriority="high" crossorigin="anonymous" decoding="async" draggable="false" /></span></span><span class="sticker-title">教育</span><span class="sticker-action" aria-hidden="true">↗</span></button>
                 <div class="sticker-copy fragment-education" id="sticker-education" role="region" aria-labelledby="fragment-education-title" hidden>
                   <p class="fragment-meta">01 / EDUCATION</p>
                   <h4 id="fragment-education-title">教育</h4>
@@ -137,7 +148,7 @@
                 </div>
               </article>
               <article class="sticker" style="--orbit-angle:-90deg;--angle:6deg;--delay:70ms;--tint:#b5c7ff" data-shape="oval">
-                <button class="sticker-toggle sticker-toggle-art" type="button" aria-expanded="false" aria-controls="sticker-experience"><span class="sticker-number">02 / EXPERIENCE</span><span class="asset-wrapper" style="--ink-width:119.907px;--ink-height:118.196px;--source-width:139.1304%;--source-left:-19.7690%;--source-top:-5.8580%;--asset-mask:url('assets/about/Experience.png');--mask-x:50.5208%;--mask-y:99.9943%"><span class="asset-ink"><img src="assets/about/Experience.png" alt="" width="2048" height="1536" loading="lazy" decoding="async" draggable="false" /></span></span><span class="sticker-title">经历</span><span class="sticker-action" aria-hidden="true">↗</span></button>
+                <button class="sticker-toggle sticker-toggle-art" type="button" aria-expanded="false" aria-controls="sticker-experience"><span class="sticker-number">02 / EXPERIENCE</span><span class="asset-wrapper" style="--ink-width:119.907px;--ink-height:118.196px;--source-width:139.1304%;--source-left:-19.7690%;--source-top:-5.8580%;--asset-mask:url('../assets/about/Experience.webp');--mask-x:50.5208%;--mask-y:99.9943%"><span class="asset-ink"><img src="assets/about/Experience.webp" alt="" width="336" height="252" loading="eager" fetchpriority="high" crossorigin="anonymous" decoding="async" draggable="false" /></span></span><span class="sticker-title">经历</span><span class="sticker-action" aria-hidden="true">↗</span></button>
                 <div class="sticker-copy fragment-experience" id="sticker-experience" role="region" aria-labelledby="fragment-experience-title" hidden>
                   <p class="fragment-meta">02 / EXPERIENCE</p>
                   <h4 id="fragment-experience-title">经历</h4>
@@ -148,7 +159,7 @@
                 </div>
               </article>
               <article class="sticker" style="--orbit-angle:-45deg;--angle:12deg;--delay:140ms;--tint:#eee8ce" data-shape="seal">
-                <button class="sticker-toggle sticker-toggle-art" type="button" aria-expanded="false" aria-controls="sticker-awards"><span class="sticker-number">03 / AWARDS</span><span class="asset-wrapper" style="--ink-width:97.894px;--ink-height:140.000px;--source-width:128.5356%;--source-left:-14.3096%;--source-top:-9.1281%;--asset-mask:url('assets/about/Awards.png');--mask-x:50.1465%;--mask-y:46.0160%"><span class="asset-ink"><img src="assets/about/Awards.png" alt="" width="1536" height="2048" loading="lazy" decoding="async" draggable="false" /></span></span><span class="sticker-title">奖项</span><span class="sticker-action" aria-hidden="true">↗</span></button>
+                <button class="sticker-toggle sticker-toggle-art" type="button" aria-expanded="false" aria-controls="sticker-awards"><span class="sticker-number">03 / AWARDS</span><span class="asset-wrapper" style="--ink-width:97.894px;--ink-height:140.000px;--source-width:128.5356%;--source-left:-14.3096%;--source-top:-9.1281%;--asset-mask:url('../assets/about/Awards.webp');--mask-x:50.1465%;--mask-y:46.0160%"><span class="asset-ink"><img src="assets/about/Awards.webp" alt="" width="252" height="336" loading="eager" fetchpriority="high" crossorigin="anonymous" decoding="async" draggable="false" /></span></span><span class="sticker-title">奖项</span><span class="sticker-action" aria-hidden="true">↗</span></button>
                 <div class="sticker-copy fragment-awards" id="sticker-awards" role="region" aria-labelledby="fragment-awards-title" hidden>
                   <p class="fragment-meta">03 / AWARDS</p>
                   <h4 id="fragment-awards-title">一些努力被看见的时刻。</h4>
@@ -161,7 +172,7 @@
                 </div>
               </article>
               <article class="sticker" style="--orbit-angle:180deg;--angle:5deg;--delay:210ms;--tint:#c9d9e5" data-shape="rounded">
-                <button class="sticker-toggle sticker-toggle-art" type="button" aria-expanded="false" aria-controls="sticker-skills"><span class="sticker-number">04 / TOOLKIT</span><span class="asset-wrapper" style="--ink-width:115.438px;--ink-height:73.932px;--source-width:113.4626%;--source-left:-7.4792%;--source-top:-14.9654%;--asset-mask:url('assets/about/Toolkit.png');--mask-x:55.5554%;--mask-y:45.5276%"><span class="asset-ink"><img src="assets/about/Toolkit.png" alt="" width="2048" height="1536" loading="lazy" decoding="async" draggable="false" /></span></span><span class="sticker-title">技能</span><span class="sticker-action" aria-hidden="true">↗</span></button>
+                <button class="sticker-toggle sticker-toggle-art" type="button" aria-expanded="false" aria-controls="sticker-skills"><span class="sticker-number">04 / TOOLKIT</span><span class="asset-wrapper" style="--ink-width:115.438px;--ink-height:73.932px;--source-width:113.4626%;--source-left:-7.4792%;--source-top:-14.9654%;--asset-mask:url('../assets/about/Toolkit.webp');--mask-x:55.5554%;--mask-y:45.5276%"><span class="asset-ink"><img src="assets/about/Toolkit.webp" alt="" width="264" height="198" loading="eager" fetchpriority="high" crossorigin="anonymous" decoding="async" draggable="false" /></span></span><span class="sticker-title">技能</span><span class="sticker-action" aria-hidden="true">↗</span></button>
                 <div class="sticker-copy fragment-toolkit" id="sticker-skills" role="region" aria-labelledby="fragment-skills-title" hidden>
                   <p class="fragment-meta">04 / TOOLKIT</p>
                   <h4 id="fragment-skills-title">工具很多，但它们最终都服务于想法。</h4>
@@ -170,7 +181,7 @@
                 </div>
               </article>
               <article class="sticker" style="--orbit-angle:0deg;--angle:-7deg;--delay:280ms;--tint:#d8d1ed" data-shape="ticket">
-                <button class="sticker-toggle sticker-toggle-art" type="button" aria-expanded="false" aria-controls="sticker-philosophy"><span class="sticker-number">05 / WHY DESIGN</span><span class="asset-wrapper" style="--ink-width:101.646px;--ink-height:115.168px;--source-width:117.4312%;--source-left:-8.1804%;--source-top:-19.4332%;--asset-mask:url('assets/about/Whydesign.png');--mask-x:46.9296%;--mask-y:50.8838%"><span class="asset-ink"><img src="assets/about/Whydesign.png" alt="" width="1536" height="2048" loading="lazy" decoding="async" draggable="false" /></span></span><span class="sticker-title">设计理念</span><span class="sticker-action" aria-hidden="true">↗</span></button>
+                <button class="sticker-toggle sticker-toggle-art" type="button" aria-expanded="false" aria-controls="sticker-philosophy"><span class="sticker-number">05 / WHY DESIGN</span><span class="asset-wrapper" style="--ink-width:101.646px;--ink-height:115.168px;--source-width:117.4312%;--source-left:-8.1804%;--source-top:-19.4332%;--asset-mask:url('../assets/about/Whydesign.webp');--mask-x:46.9296%;--mask-y:50.8838%"><span class="asset-ink"><img src="assets/about/Whydesign.webp" alt="" width="240" height="320" loading="eager" fetchpriority="high" crossorigin="anonymous" decoding="async" draggable="false" /></span></span><span class="sticker-title">设计理念</span><span class="sticker-action" aria-hidden="true">↗</span></button>
                 <div class="sticker-copy fragment-philosophy" id="sticker-philosophy" role="region" aria-labelledby="fragment-philosophy-title" hidden>
                   <p class="fragment-meta">05 / WHY DESIGN</p>
                   <h4 id="fragment-philosophy-title">我喜欢那些在使用之后，仍然会留下感受的设计。</h4>
@@ -179,7 +190,7 @@
                 </div>
               </article>
               <article class="sticker" style="--orbit-angle:135deg;--angle:-8deg;--delay:350ms;--tint:#e7dbcc" data-shape="oval">
-                <button class="sticker-toggle sticker-toggle-art" type="button" aria-expanded="false" aria-controls="sticker-tmi"><span class="sticker-number">06 / TMI</span><span class="asset-wrapper" style="--ink-width:95.084px;--ink-height:97.406px;--source-width:107.1877%;--source-left:-3.4892%;--source-top:-20.7766%;--asset-mask:url('assets/about/Tmi.png');--mask-x:48.5440%;--mask-y:52.5856%"><span class="asset-ink"><img src="assets/about/Tmi.png" alt="" width="1536" height="2048" loading="lazy" decoding="async" draggable="false" /></span></span><span class="sticker-title">一些小事</span><span class="sticker-action" aria-hidden="true">↗</span></button>
+                <button class="sticker-toggle sticker-toggle-art" type="button" aria-expanded="false" aria-controls="sticker-tmi"><span class="sticker-number">06 / TMI</span><span class="asset-wrapper" style="--ink-width:95.084px;--ink-height:97.406px;--source-width:107.1877%;--source-left:-3.4892%;--source-top:-20.7766%;--asset-mask:url('../assets/about/Tmi.webp');--mask-x:48.5440%;--mask-y:52.5856%"><span class="asset-ink"><img src="assets/about/Tmi.webp" alt="" width="204" height="272" loading="eager" fetchpriority="high" crossorigin="anonymous" decoding="async" draggable="false" /></span></span><span class="sticker-title">一些小事</span><span class="sticker-action" aria-hidden="true">↗</span></button>
                 <div class="sticker-copy fragment-tmi" id="sticker-tmi" role="region" aria-labelledby="fragment-tmi-title" hidden>
                   <p class="fragment-meta">06 / TMI</p>
                   <h4 id="fragment-tmi-title">ENFJ ☻</h4>
@@ -187,7 +198,7 @@
                 </div>
               </article>
               <article class="sticker" style="--orbit-angle:45deg;--angle:9deg;--delay:420ms;--tint:#c5dedb" data-shape="seal">
-                <button class="sticker-toggle sticker-toggle-art" type="button" aria-expanded="false" aria-controls="sticker-interests"><span class="sticker-number">07 / OFFLINE</span><span class="asset-wrapper" style="--ink-width:116.824px;--ink-height:73.460px;--source-width:106.3712%;--source-left:-3.3934%;--source-top:-62.2247%;--asset-mask:url('assets/about/Offline.png');--mask-x:53.2616%;--mask-y:49.5615%"><span class="asset-ink"><img src="assets/about/Offline.png" alt="" width="1536" height="2048" loading="lazy" decoding="async" draggable="false" /></span></span><span class="sticker-title">兴趣</span><span class="sticker-action" aria-hidden="true">↗</span></button>
+                <button class="sticker-toggle sticker-toggle-art" type="button" aria-expanded="false" aria-controls="sticker-interests"><span class="sticker-number">07 / OFFLINE</span><span class="asset-wrapper" style="--ink-width:116.824px;--ink-height:73.460px;--source-width:106.3712%;--source-left:-3.3934%;--source-top:-62.2247%;--asset-mask:url('../assets/about/Offline.webp');--mask-x:53.2616%;--mask-y:49.5615%"><span class="asset-ink"><img src="assets/about/Offline.webp" alt="" width="249" height="332" loading="eager" fetchpriority="high" crossorigin="anonymous" decoding="async" draggable="false" /></span></span><span class="sticker-title">兴趣</span><span class="sticker-action" aria-hidden="true">↗</span></button>
                 <div class="sticker-copy fragment-offline" id="sticker-interests" role="region" aria-labelledby="fragment-interests-title" hidden>
                   <p class="fragment-meta">07 / OFFLINE</p>
                   <h4 id="fragment-interests-title">网球 · 小提琴 · 健身</h4>
@@ -196,7 +207,7 @@
                 </div>
               </article>
               <article class="sticker" style="--orbit-angle:90deg;--angle:-4deg;--delay:490ms;--tint:#e3e7f5" data-shape="rounded">
-                <button class="sticker-toggle sticker-toggle-art" type="button" aria-expanded="false" aria-controls="sticker-now"><span class="sticker-number">08 / RIGHT NOW</span><span class="asset-wrapper" style="--ink-width:102.621px;--ink-height:76.473px;--source-width:140.6593%;--source-left:-25.2747%;--source-top:-21.4747%;--asset-mask:url('assets/about/Rightnow.png');--mask-x:62.1622%;--mask-y:51.6646%"><span class="asset-ink"><img src="assets/about/Rightnow.png" alt="" width="2048" height="1536" loading="lazy" decoding="async" draggable="false" /></span></span><span class="sticker-title">最近在做</span><span class="sticker-action" aria-hidden="true">↗</span></button>
+                <button class="sticker-toggle sticker-toggle-art" type="button" aria-expanded="false" aria-controls="sticker-now"><span class="sticker-number">08 / RIGHT NOW</span><span class="asset-wrapper" style="--ink-width:102.621px;--ink-height:76.473px;--source-width:140.6593%;--source-left:-25.2747%;--source-top:-21.4747%;--asset-mask:url('../assets/about/Rightnow.webp');--mask-x:62.1622%;--mask-y:51.6646%"><span class="asset-ink"><img src="assets/about/Rightnow.webp" alt="" width="292" height="219" loading="eager" fetchpriority="high" crossorigin="anonymous" decoding="async" draggable="false" /></span></span><span class="sticker-title">最近在做</span><span class="sticker-action" aria-hidden="true">↗</span></button>
                 <div class="sticker-copy fragment-now" id="sticker-now" role="region" aria-labelledby="fragment-now-title" hidden>
                   <p class="fragment-meta">08 / RIGHT NOW</p>
                   <h4 id="fragment-now-title">最近，正在努力成为……</h4>
@@ -208,7 +219,7 @@
             </div>
           </div>
         </section>
-        <p class="text-meta about-next">SELECTED WORK — 3 PROJECTS · 2025</p>
+        <p class="text-meta about-next">SELECTED WORK — 4 PROJECTS · 2025</p>
         </div>
       </section>
     </div>
@@ -237,7 +248,15 @@
       <video autoplay loop muted playsinline> for Orbit and EchoCourt.
     -->
     <section id="work" class="work" aria-label="Work">
-      <article class="work-item">
+      <div class="work-filters" role="group" aria-label="按作品方向筛选" hidden>
+        <button type="button" data-work-filter="all" aria-pressed="true">全部</button>
+        <button type="button" data-work-filter="interaction" aria-pressed="false">交互设计</button>
+        <button type="button" data-work-filter="industrial" aria-pressed="false">工业设计</button>
+        <button type="button" data-work-filter="visual" aria-pressed="false">视觉设计</button>
+      </div>
+      <p class="work-filter-status" role="status" aria-live="polite" aria-atomic="true"></p>
+      <p class="work-empty" hidden>这个方向的作品正在整理中，先看看其他作品吧。</p>
+      <article class="work-item" data-categories="interaction">
         <div class="work-media" data-carousel aria-label="Orbit 时环 效果图">
           <div class="work-carousel-viewport">
             <div class="work-carousel-track">
@@ -304,7 +323,7 @@
         </div>
       </article>
 
-      <article class="work-item">
+      <article class="work-item" data-categories="interaction industrial">
         <div class="work-media" data-carousel aria-label="EchoCourt 回声球场 效果图">
           <div class="work-carousel-viewport">
             <div class="work-carousel-track">
@@ -391,7 +410,7 @@
         </div>
       </article>
 
-      <article class="work-item">
+      <article class="work-item" data-categories="interaction industrial">
         <div class="work-media" data-carousel aria-label="Serava 喵梦 效果图">
           <div class="work-carousel-viewport">
             <div class="work-carousel-track">
@@ -435,6 +454,57 @@
           </div>
         </div>
       </article>
+      <article class="work-item" data-categories="interaction industrial visual">
+        <div class="work-media" data-carousel aria-label="水木清风 AR 系列折扇效果图">
+          <div class="work-carousel-viewport">
+            <div class="work-carousel-track">
+              <div class="work-carousel-slide">
+                <a class="work-media-link" draggable="false" href="fan.html" aria-label="查看水木清风项目详情（图 1/4）">
+                  <div class="work-media-frame">
+                    <img class="work-media-asset" style="object-fit: contain" draggable="false" src="assets/fan/1.png" alt="水木清风 AR 系列折扇项目图 1" width="2559" height="1438" loading="lazy" decoding="async" />
+                  </div>
+                </a>
+              </div>
+              <div class="work-carousel-slide">
+                <a class="work-media-link" draggable="false" href="fan.html" aria-label="查看水木清风项目详情（图 2/4）">
+                  <div class="work-media-frame">
+                    <img class="work-media-asset" style="object-fit: contain" draggable="false" src="assets/fan/2.png" alt="水木清风 AR 系列折扇项目图 2" width="2559" height="1432" loading="lazy" decoding="async" />
+                  </div>
+                </a>
+              </div>
+              <div class="work-carousel-slide">
+                <a class="work-media-link" draggable="false" href="fan.html" aria-label="查看水木清风项目详情（图 3/4）">
+                  <div class="work-media-frame">
+                    <img class="work-media-asset" style="object-fit: contain" draggable="false" src="assets/fan/3.png" alt="水木清风 AR 系列折扇项目图 3" width="2559" height="1437" loading="lazy" decoding="async" />
+                  </div>
+                </a>
+              </div>
+              <div class="work-carousel-slide">
+                <a class="work-media-link" draggable="false" href="fan.html" aria-label="查看水木清风项目详情（图 4/4）">
+                  <div class="work-media-frame">
+                    <img class="work-media-asset" style="object-fit: contain" draggable="false" src="assets/fan/4.png" alt="水木清风 AR 系列折扇项目图 4" width="2559" height="1438" loading="lazy" decoding="async" />
+                  </div>
+                </a>
+              </div>
+            </div>
+          </div>
+          <button class="work-media-nav work-media-prev" type="button" aria-label="上一张效果图" disabled>‹</button>
+          <button class="work-media-nav work-media-next" type="button" aria-label="下一张效果图" disabled>›</button>
+        </div>
+        <div class="work-info">
+          <div class="work-info-left">
+            <h3 class="work-title">04 · 水木清风 · AR 系列折扇</h3>
+            <div class="work-hook">
+              <p class="text-zh-body work-hook-zh">让实体折扇，成为连接校园文化与数字内容的交互入口。</p>
+              <p class="text-body work-hook-en">SHUIMU QINGFENG — An AI-powered AR Souvenir</p>
+            </div>
+          </div>
+          <div class="work-info-right">
+            <p class="text-body work-role">Product / Visual / AR Experience</p>
+            <p class="text-meta work-meta">Product Design · Visual Design · AI 3D · AR</p>
+          </div>
+        </div>
+      </article>
     </section>
   </main>
 
@@ -451,6 +521,7 @@
   <script src="js/hero-cursor.js" defer></script>
   <script src="js/site-nav.js" defer></script>
   <script src="js/work-carousel.js" defer></script>
+  <script src="js/work-filter.js" defer></script>
   <script src="js/about-stickers.js" defer></script>
 </body>
 </html>

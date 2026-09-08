@@ -5,6 +5,23 @@
   var portrait = stage.querySelector('.sticker-person');
   var stickers = Array.from(stage.querySelectorAll('.sticker'));
   var reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+  var imagesReady = false;
+  var stageVisible = false;
+  stage.classList.add('about-images-pending');
+  // Decode the already-preloaded images together, without creating new Image
+  // objects or changing src. A failed image must not block the other assets.
+  Promise.all(Array.from(stage.querySelectorAll('img')).map(function (img) {
+    return img.decode().catch(function () {});
+  })).then(function () {
+    imagesReady = true;
+    stage.classList.remove('about-images-pending');
+    revealStickers();
+  });
+  function revealStickers() {
+    if (!imagesReady || !stageVisible) return;
+    stage.classList.remove('stickers-pending');
+    if (!reduced.matches && !active) stage.classList.add('stickers-enter');
+  }
   var active = null;
   var copies = new Map();
   // One shared DetailPanel, outside the composition's normal flow.
@@ -133,8 +150,8 @@
     stage.classList.add('stickers-pending');
     var observer = new IntersectionObserver(function (entries) {
       if (entries.some(function (entry) { return entry.isIntersecting; })) {
-        stage.classList.remove('stickers-pending');
-        stage.classList.add('stickers-enter');
+        stageVisible = true;
+        revealStickers();
         observer.disconnect();
       }
     }, { threshold: .12 });
