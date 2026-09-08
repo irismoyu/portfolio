@@ -7,6 +7,37 @@
 
 html {
   scroll-behavior: smooth;
+  scroll-snap-type: y proximity;
+  --work-snap-inset: 88px;
+  --home-content-width: 1800px;
+}
+
+/* Snap the normal-flow wrapper instead of the sticky hero, whose visual
+   position moves during the About cover transition. Proximity leaves
+   long sections and ordinary wheel/touch scrolling freely accessible. */
+.hero-cover-stack,
+.about,
+.work-filters,
+.work-item {
+  scroll-snap-align: start;
+  scroll-snap-stop: normal;
+}
+
+.work-filters,
+.work-item {
+  scroll-margin-top: var(--work-snap-inset);
+}
+
+@media (max-width: 480px) {
+  html {
+    --work-snap-inset: 72px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-snap-type: none;
+  }
 }
 
 /* ---------------------------------------------------------------- */
@@ -283,8 +314,8 @@ body.custom-cursor-active #hero * {
   /* Full screen, not a strip hugging hero's bottom — this is what makes it
      read as its own chapter, and what lets it fully cover hero once
      scrolled up (see .hero's comment above). */
-  min-height: 100vh;
-  scroll-margin-top: var(--space-6);
+  min-height: 100svh;
+  scroll-margin-top: 0;
   background: var(--deep);
   color: var(--on-deep);
   padding: var(--space-6) var(--space-6) var(--space-8);
@@ -320,9 +351,20 @@ body.custom-cursor-active #hero * {
   pointer-events: none;
 }
 
+.about-content {
+  width: 100%;
+  /* One readable, centered column for both the resume and playground.
+     Shared padding belongs here so their left and right edges agree. */
+  max-width: 1120px;
+  margin-inline: auto;
+  padding-inline: clamp(0px, 2vw, 24px);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-7);
+}
+
 .about-inner {
   width: 100%;
-  max-width: 640px;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -338,6 +380,7 @@ body.custom-cursor-active #hero * {
 }
 
 .about-bio {
+  width: 100%;
   display: flex;
   flex-direction: column;
   /* Tight gap: the EN line should read as a caption riding under the CN
@@ -383,13 +426,29 @@ body.custom-cursor-active #hero * {
 
 .about-contact {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
+  width: 100%;
+  flex-direction: column;
+  align-items: flex-start;
   gap: var(--space-4);
   margin-top: var(--space-2);
 }
 
+.about-downloads {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
+  width: 100%;
+}
+
+@media (max-width: 640px) {
+  .about-downloads {
+    grid-template-columns: 1fr;
+  }
+}
+
 .about-email {
+  overflow-wrap: anywhere;
+  max-width: 100%;
   font-family: var(--font-body);
   font-size: var(--fs-body);
   font-weight: var(--fw-body-strong);
@@ -405,6 +464,12 @@ body.custom-cursor-active #hero * {
 }
 
 .about-cv-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 56px;
+  height: 100%;
+  text-align: center;
   font-family: var(--font-body);
   font-size: var(--fs-body);
   font-weight: var(--fw-body-strong);
