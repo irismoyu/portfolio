@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">AI Creative Workflow</title>
+  <desc id="desc">Define → Generate → Evaluate → Diagnose → Refine → Deliver. Human-in-the-loop: Refine returns to Evaluate.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0L8 4L0 8" fill="none" stroke="#6E8BFF" stroke-width="1.5"/></marker>
+  </defs>
+  <rect width="1600" height="900" fill="#081160"/>
+  <g font-family="Inter, 'Noto Sans SC', sans-serif" fill="#EEF0F8">
+    <text x="96" y="104" font-size="22" fill="#9AA3C4" letter-spacing="3">METHODOLOGY / AIGC</text>
+    <text x="96" y="204" font-family="Archivo, 'Noto Sans SC', sans-serif" font-size="68" font-weight="700">AI Creative Workflow</text>
+    <text x="96" y="265" font-size="30">AI 创作工作流</text>
+    <rect x="534" y="350" width="688" height="328" rx="10" fill="none" stroke="#6E8BFF" stroke-width="2"/>
+    <text x="566" y="398" font-size="24">Human-in-the-loop</text>
+    <g fill="#161E42" stroke="#9AA3C4">
+      <rect x="96" y="450" width="190" height="142" rx="10"/>
+      <rect x="328" y="450" width="190" height="142" rx="10"/>
+      <rect x="560" y="450" width="190" height="142" rx="10"/>
+      <rect x="792" y="450" width="190" height="142" rx="10"/>
+      <rect x="1024" y="450" width="172" height="142" rx="10"/>
+      <rect x="1258" y="450" width="246" height="142" rx="10"/>
+    </g>
+    <g font-size="19" fill="#9AA3C4">
+      <text x="116" y="490">01 / DEFINE</text><text x="348" y="490">02 / GENERATE</text>
+      <text x="580" y="490">03 / EVALUATE</text><text x="812" y="490">04 / DIAGNOSE</text>
+      <text x="1044" y="490">05 / REFINE</text><text x="1278" y="490">06 / DELIVER</text>
+    </g>
+    <g font-size="28">
+      <text x="116" y="550">目标定义</text><text x="348" y="550">AI 生成</text>
+      <text x="580" y="550">结果评估</text><text x="812" y="550">问题诊断</text>
+      <text x="1044" y="550">迭代优化</text><text x="1278" y="550">设计落地</text>
+    </g>
+    <g fill="none" stroke="#6E8BFF" stroke-width="2" marker-end="url(#arrow)">
+      <path d="M288 521H316"/><path d="M520 521H548"/><path d="M752 521H780"/>
+      <path d="M984 521H1012"/><path d="M1198 521H1246"/>
+      <path d="M1110 594V640H655V604"/>
+    </g>
+    <rect x="750" y="620" width="258" height="38" fill="#081160"/>
+    <text x="878" y="646" text-anchor="middle" font-size="22" fill="#6E8BFF">评价 → 诊断 → 迭代</text>
+    <text x="96" y="797" font-size="28">AI 扩展可能性，设计判断负责让结果收敛。</text>
+  </g>
+</svg>

@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AI Creative Workflow · AI 创作工作流 · 刘予墨 / LY</title>
+  <meta name="description" content="从设计目标出发，通过生成、评估、诊断与反馈循环，将 AI 输出逐步收敛为可落地的设计结果。Human-in-the-loop · 人机协作方法论。" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,600;125,700;125,800&family=Inter:wght@400;500&family=Space+Mono:wght@400&family=Noto+Sans+SC:wght@400;700;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/tokens.css" />
+  <link rel="stylesheet" href="css/base.css" />
+  <link rel="stylesheet" href="css/detail.css" />
+  <link rel="stylesheet" href="css/ai-workflow.css" />
+</head>
+<body class="detail-page workflow-page">
+  <header class="site-nav">
+    <a href="index.html" class="site-nav-brand">刘予墨 <span class="site-nav-brand-en">/ LY</span></a>
+    <nav class="site-nav-links" aria-label="Primary">
+      <a href="index.html#work">Work</a>
+      <a href="index.html#about">About</a>
+    </nav>
+  </header>
+  <main class="detail">
+    <a class="detail-back text-meta" href="index.html#work">← 返回作品 / Back to work</a>
+    <header class="workflow-intro" id="overview">
+      <p class="text-meta workflow-muted">Methodology / AIGC</p>
+      <h1 class="text-display-xl">AI Creative Workflow</h1>
+      <p class="text-h2">AI 创作工作流</p>
+      <p>Human-in-the-loop · 人机协作方法论</p>
+      <p>从设计目标出发，通过生成、评估、诊断与反馈循环，将 AI 输出逐步收敛为可落地的设计结果。</p>
+      <ul class="workflow-tags" aria-label="内容标签">
+        <li>AI Workflow</li><li>Human-in-the-loop</li><li>AI Evaluation</li><li>Design Process</li>
+      </ul>
+    </header>
+
+    <div class="workflow-flow" role="group" aria-label="AI 创作工作流方法论图，按 01 至 06 阅读">
+      <div class="workflow-entry">
+        <ol class="workflow-flow" aria-label="目标与生成">
+          <li class="workflow-step">
+            <p class="text-meta">01 / Define</p>
+            <h3 class="text-h2">目标定义 <span lang="en">Define</span></h3>
+            <p>明确任务与视觉目标</p>
+            <ul><li>设计需求</li><li>使用场景</li><li>风格方向</li><li>参考素材</li></ul>
+          </li>
+          <li class="workflow-step">
+            <p class="text-meta">02 / Generate</p>
+            <h3 class="text-h2">AI 生成 <span lang="en">Generate</span></h3>
+            <p>建立初始方案空间</p>
+            <ul><li>Prompt</li><li>Reference</li><li>参数控制</li><li>多方案生成</li></ul>
+          </li>
+        </ol>
+      </div>
+      <section class="workflow-loop" aria-labelledby="loop-title">
+        <h2 class="text-h2" id="loop-title">Human-in-the-loop</h2>
+        <p>评价 → 诊断 → 迭代</p>
+        <ol class="workflow-flow" start="3" aria-label="人机协作反馈循环">
+          <li class="workflow-step">
+            <p class="text-meta">03 / Evaluate</p>
+            <h3 class="text-h2">结果评估 <span lang="en">Evaluate</span></h3>
+            <p>判断生成结果的有效性</p>
+            <ul><li>基础质量</li><li>视觉质量</li><li>风格一致性</li><li>任务匹配度</li></ul>
+          </li>
+          <li class="workflow-step">
+            <p class="text-meta">04 / Diagnose</p>
+            <h3 class="text-h2">问题诊断 <span lang="en">Diagnose</span></h3>
+            <p>定位 Bad Case 的来源</p>
+            <ul><li>Prompt 问题</li><li>参考素材问题</li><li>参数设置问题</li><li>模型能力边界</li></ul>
+          </li>
+          <li class="workflow-step">
+            <p class="text-meta">05 / Refine</p>
+            <h3 class="text-h2">迭代优化 <span lang="en">Refine</span></h3>
+            <p>将判断转化为具体操作</p>
+            <ul><li>调整 Prompt</li><li>更换参考</li><li>参数优化</li><li>局部修改 / 人工调整</li></ul>
+          </li>
+        </ol>
+        <div class="workflow-return">05 → 03 · 迭代后重新评价</div>
+      </section>
+      <section class="workflow-step workflow-deliver" aria-labelledby="deliver-title">
+        <p class="text-meta">06 / Deliver</p>
+        <h3 class="text-h2" id="deliver-title">设计落地 <span lang="en">Deliver</span></h3>
+        <p>进入真实设计场景</p>
+        <ul><li>视觉设计</li><li>3D 资产</li><li>UI / 交互</li><li>AR / 原型</li></ul>
+      </section>
+    </div>
+
+    <footer class="workflow-ending">
+      <p class="text-h2">“AI 扩展可能性，设计判断负责让结果收敛。”</p>
+      <p class="workflow-muted">生成不是终点，评价—反馈—迭代才构成完整的 AI 创作工作流。</p>
+    </footer>
+    <nav class="detail-project-nav" aria-label="作品导航">
+      <a class="detail-project-nav-link" href="index.html#work"><span class="text-meta">← All projects</span><span class="detail-project-nav-name">返回作品列表</span></a>
+      <a class="detail-project-nav-link detail-project-nav-next" href="#overview"><span class="text-meta">↑ Back to top</span><span class="detail-project-nav-name">AI 创作工作流</span></a>
+    </nav>
+  </main>
+  <script src="js/site-nav.js" defer></script>
+</body>
+</html>
